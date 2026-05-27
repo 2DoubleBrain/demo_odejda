@@ -4,34 +4,53 @@
   "managerTgId": "1043573353",
   "botToken": "8900698937:AAFrP_Z8KlJ5i1DBuC62IDt0HTT4QX0fF4M",
   "categories": [
-    "Электронки",
-    "Жидкости",
-    "Под-системы",
-    "Испарители",
-    "Картриджи",
-    "Тест"
+    "Одежда",
+    "Обувь",
+    "Аксессуары"
   ],
-  "products": [
+ "products": [
     {
-      "id": 6,
-      "name": "MFU 25000",
-      "description": "",
-      "category": "Электронки",
-      "priceRanges": {
-        "3000-10000": 410,
-        "10000-30000": 405,
-        "30000-50000": 400,
-        "50000-100000": 390,
-        "100000-999999": 380
-      },
-      "flavors": [
-        "Уточнить у менеджера"
-      ],
-      "colors": null,
-      "resistances": null,
+      "id": 1,
+      "name": "Футболка классическая",
+      "description": "Хлопковая футболка, дышащая ткань",
+      "category": "Одежда",
+      "price": 1990,
+      "sizes": ["XS", "S", "M", "L", "XL", "XXL"],
       "sale": false,
-      "salePrice": null,
-      "photo": "https://i.postimg.cc/4xdSDTNt/5440618924673274820.jpg",
+      "photo": "https://tvoe.ru/img/36ftb2s/product/754/1005/8/4670080046982-0-1.jpg",
+      "popular": true
+    },
+    {
+      "id": 2,
+      "name": "Кроссовки спортивные",
+      "description": "Удобные кроссовки для бега",
+      "category": "Обувь",
+      "price": 4990,
+      "sizes": ["39", "40", "41", "42", "43", "44", "45"],
+      "sale": true,
+      "photo": "https://discountmsk.ru/upload/iblock/d66/z9xcqfos59weerx3ddf7pmawbegp1vb0/DSC_2890.jpg",
+      "popular": true
+    },
+    {
+      "id": 3,
+      "name": "Худи утепленное",
+      "description": "Теплое худи с капюшоном",
+      "category": "Одежда",
+      "price": 3490,
+      "sizes": ["S", "M", "L", "XL", "XXL"],
+      "sale": false,
+      "photo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTmG9MYgxcIbl0seUtVHT5lKoIHdr1nPe7uiw&s",
+      "popular": false
+    },
+    {
+      "id": 4,
+      "name": "Кепка бейсболка",
+      "description": "Стильная кепка",
+      "category": "Аксессуары",
+      "price": 990,
+      "sizes": null,
+      "sale": false,
+      "photo": "https://hatsandcaps.ru/components/com_jshopping/files/img_products/full_36-063-16(0).jpg",
       "popular": false
     }
   ]
