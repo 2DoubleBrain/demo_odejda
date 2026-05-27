@@ -663,3 +663,70 @@ body {
         padding: 30px 20px;
     }
 }
+
+/* ============ ФИЛЬТРЫ ============ */
+.filters-container {
+    background: white;
+    border-radius: 20px;
+    padding: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.filter-section {
+    margin-bottom: 15px;
+}
+
+.filter-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1a1a2e;
+    margin-bottom: 10px;
+}
+
+.filter-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.filter-btn {
+    background: #f0f0f0;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 30px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.filter-btn.active {
+    background: #1a1a2e;
+    color: #FFD700;
+}
+
+.filter-reset {
+    margin-top: 10px;
+    text-align: center;
+}
+
+.reset-btn {
+    background: none;
+    border: 1px solid #ddd;
+    padding: 8px 20px;
+    border-radius: 30px;
+    font-size: 13px;
+    cursor: pointer;
+    color: #888;
+}
+
+.reset-btn:active {
+    background: #f0f0f0;
+}
+
+.products-count {
+    font-size: 13px;
+    color: #888;
+    margin-bottom: 15px;
+    text-align: right;
+}
