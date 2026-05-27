@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
-    <title>AmigoOPT - Админ панель</title>
+    <title>Nova Fashion - Админ панель</title>
     <style>
         * {
             margin: 0;
@@ -453,7 +453,7 @@
     <!-- Админ панель -->
     <div id="adminPanel" style="display: none;">
         <div class="card">
-            <h2>📦 AmigoOPT - Управление магазином</h2>
+            <h2>📦 Nova Fashion - Управление магазином</h2>
             
             <div class="tabs">
                 <button class="tab-btn active" data-tab="products">📋 Товары</button>
@@ -932,7 +932,7 @@
         localStorage.setItem('amigoopt_github_token', token);
         
         const data = {
-            shopName: 'AmigoOPT',
+            shopName: 'Nova Fashion',
             contactPhone: document.getElementById('shopPhone').value,
             managerTgId: document.getElementById('managerId').value,
             botToken: shopConfig.botToken || '',
@@ -982,7 +982,7 @@
     // ============ ЭКСПОРТ ============
     function exportAllData() {
         const data = {
-            shopName: 'AmigoOPT',
+            shopName: 'Nova Fashion',
             contactPhone: document.getElementById('shopPhone').value,
             managerTgId: document.getElementById('managerId').value,
             botToken: shopConfig.botToken || '',
