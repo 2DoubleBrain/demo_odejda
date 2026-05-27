@@ -4,7 +4,9 @@ let categories = [];
 let shopConfig = {};
 let cart = [];
 let currentPage = 'shop';
+let currentGender = 'all';
 let currentCategory = 'all';
+let currentSize = 'all';
 
 // Переменные для модального окна
 let currentProduct = null;
@@ -12,15 +14,19 @@ let selectedSize = null;
 let selectedPrice = null;
 let selectedQuantity = 1;
 
-// ============ КОНФИГУРАЦИЯ РАЗМЕРОВ ============
+// ============ КОНФИГУРАЦИЯ ============
+const genders = [
+    { id: 'all', name: 'Все', icon: '👥' },
+    { id: 'boy', name: 'Мальчик', icon: '👦' },
+    { id: 'girl', name: 'Девочка', icon: '👧' },
+    { id: 'man', name: 'Мужчина', icon: '👨' },
+    { id: 'woman', name: 'Женщина', icon: '👩' }
+];
+
 // Размеры для одежды
 const clothingSizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL'];
-// Размеры для обуви (кроссовки)
-const shoeSizes = ['39', '40', '41', '42', '43', '44', '45', '46', '47'];
-
-function getSizeLabel(size) {
-    return size;
-}
+// Размеры для обуви
+const shoeSizes = ['35', '36', '37', '38', '39', '40', '41', '42', '43', '44', '45', '46', '47'];
 
 // ============ ПОЛУЧЕНИЕ ИНФОРМАЦИИ О ПОЛЬЗОВАТЕЛЕ ============
 function getUserInfo() {
@@ -153,6 +159,57 @@ function switchPage(page) {
     updateCartBadge();
 }
 
+// ============ ФИЛЬТРАЦИЯ ============
+function getFilteredProducts() {
+    let filtered = [...products];
+    
+    // Фильтр по полу
+    if (currentGender !== 'all') {
+        filtered = filtered.filter(p => p.gender === currentGender);
+    }
+    
+    // Фильтр по категории
+    if (currentCategory !== 'all') {
+        filtered = filtered.filter(p => p.category === currentCategory);
+    }
+    
+    // Фильтр по размеру (только если выбран конкретный размер)
+    if (currentSize !== 'all') {
+        filtered = filtered.filter(p => {
+            if (p.sizes && p.sizes.length) {
+                return p.sizes.includes(currentSize);
+            }
+            return false;
+        });
+    }
+    
+    return filtered;
+}
+
+function getAvailableSizes() {
+    const filtered = getFilteredProducts();
+    const allSizes = new Set();
+    filtered.forEach(p => {
+        if (p.sizes && p.sizes.length) {
+            p.sizes.forEach(s => allSizes.add(s));
+        }
+    });
+    return Array.from(allSizes).sort((a, b) => {
+        // Сортировка размеров: сначала числа, потом буквы
+        if (isNaN(parseInt(a)) && !isNaN(parseInt(b))) return 1;
+        if (!isNaN(parseInt(a)) && isNaN(parseInt(b))) return -1;
+        if (!isNaN(parseInt(a)) && !isNaN(parseInt(b))) return parseInt(a) - parseInt(b);
+        return a.localeCompare(b);
+    });
+}
+
+function resetFilters() {
+    currentGender = 'all';
+    currentCategory = 'all';
+    currentSize = 'all';
+    renderShopPage();
+}
+
 // ============ ЛОГИКА КОРЗИНЫ ============
 function getCartTotal() {
     return cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
@@ -172,23 +229,9 @@ function updateCartBadge() {
     }
 }
 
-function getSizesForProduct(product) {
-    // Если у товара указаны свои размеры (для обуви или одежды)
-    if (product.sizes && product.sizes.length > 0) {
-        return product.sizes;
-    }
-    // Если категория "Обувь" - показываем размеры обуви
-    if (product.category === 'Обувь') {
-        return shoeSizes;
-    }
-    // Иначе - размеры одежды
-    return clothingSizes;
-}
-
 function getVariantType(product) {
-    const sizes = getSizesForProduct(product);
-    if (sizes && sizes.length > 0) {
-        return { type: 'sizes', label: 'Выберите размер', items: sizes };
+    if (product.sizes && product.sizes.length > 0) {
+        return { type: 'sizes', label: 'Выберите размер', items: product.sizes };
     }
     return null;
 }
@@ -291,15 +334,21 @@ function escapeHtml(text) {
 
 function renderProductCard(product) {
     let displayPrice = product.price || 0;
-    
     const productJson = JSON.stringify(product).replace(/'/g, "&#39;").replace(/"/g, '&quot;');
     const rightContent = product.sale ? '<span class="sale-badge">🔥 SALE</span>' : '<span class="sale-placeholder"></span>';
+    
+    // Иконка пола
+    let genderIcon = '';
+    if (product.gender === 'boy') genderIcon = '👦 ';
+    else if (product.gender === 'girl') genderIcon = '👧 ';
+    else if (product.gender === 'man') genderIcon = '👨 ';
+    else if (product.gender === 'woman') genderIcon = '👩 ';
     
     return `
         <div class="product-card" onclick='openProductModal(${productJson})'>
             <img src="${product.photo || 'https://placehold.co/300x200/eee/999?text=No+Image'}" class="product-image" onerror="this.src='https://placehold.co/300x200/eee/999?text=No+Image'">
             <div class="product-info">
-                <div class="product-name">${escapeHtml(product.name)}</div>
+                <div class="product-name">${genderIcon}${escapeHtml(product.name)}</div>
                 <div class="product-price-wrapper">
                     <span class="product-price">${displayPrice}₽</span>
                     ${rightContent}
@@ -310,33 +359,102 @@ function renderProductCard(product) {
     `;
 }
 
+function renderFilters() {
+    const availableSizes = getAvailableSizes();
+    
+    let html = `
+        <div class="filters-container">
+            <div class="filter-section">
+                <div class="filter-title">👥 Для кого</div>
+                <div class="filter-buttons">
+                    ${genders.map(g => `<button class="filter-btn ${currentGender === g.id ? 'active' : ''}" data-filter="gender" data-value="${g.id}">${g.icon} ${g.name}</button>`).join('')}
+                </div>
+            </div>
+            
+            <div class="filter-section">
+                <div class="filter-title">📁 Категория</div>
+                <div class="filter-buttons">
+                    <button class="filter-btn ${currentCategory === 'all' ? 'active' : ''}" data-filter="category" data-value="all">📦 Все</button>
+                    ${categories.map(c => `<button class="filter-btn ${currentCategory === c ? 'active' : ''}" data-filter="category" data-value="${c}">${c === 'Одежда' ? '👕' : c === 'Обувь' ? '👟' : '🧢'} ${c}</button>`).join('')}
+                </div>
+            </div>
+            
+            <div class="filter-section">
+                <div class="filter-title">📏 Размер</div>
+                <div class="filter-buttons">
+                    <button class="filter-btn ${currentSize === 'all' ? 'active' : ''}" data-filter="size" data-value="all">Все размеры</button>
+                    ${availableSizes.map(s => `<button class="filter-btn ${currentSize === s ? 'active' : ''}" data-filter="size" data-value="${s}">${s}</button>`).join('')}
+                </div>
+            </div>
+            
+            <div class="filter-reset">
+                <button class="reset-btn" onclick="resetFilters()">🔄 Сбросить все фильтры</button>
+            </div>
+        </div>
+    `;
+    
+    return html;
+}
+
 function renderShopPage() {
     if (!products.length) {
         document.getElementById('mainContent').innerHTML = '<div style="text-align:center; padding:50px">Загрузка товаров...</div>';
         return;
     }
+    
+    const filtered = getFilteredProducts();
     const searchTerm = document.getElementById('searchInput')?.value.toLowerCase() || '';
-    let filtered = currentCategory === 'all' ? products : products.filter(p => p.category === currentCategory);
-    if (searchTerm) filtered = filtered.filter(p => p.name.toLowerCase().includes(searchTerm) || (p.description && p.description.toLowerCase().includes(searchTerm)));
-    const popular = filtered.filter(p => p.popular);
-    const other = filtered.filter(p => !p.popular);
-    let html = `<div class="categories-grid"><div class="category-chip ${currentCategory === 'all' ? 'active' : ''}" data-cat="all">Все</div>`;
-    categories.forEach(cat => { html += `<div class="category-chip ${currentCategory === cat ? 'active' : ''}" data-cat="${cat}">${escapeHtml(cat)}</div>`; });
-    html += `</div>`;
+    let searched = filtered;
+    if (searchTerm) {
+        searched = filtered.filter(p => p.name.toLowerCase().includes(searchTerm) || (p.description && p.description.toLowerCase().includes(searchTerm)));
+    }
+    
+    const popular = searched.filter(p => p.popular);
+    const other = searched.filter(p => !p.popular);
+    
+    let html = renderFilters();
+    html += `<div class="products-count">Найдено товаров: ${searched.length}</div>`;
+    
     if (popular.length) html += `<h2 class="section-title">⭐ Популярное</h2><div class="products-grid">${popular.map(p => renderProductCard(p)).join('')}</div>`;
     if (other.length) html += `<h2 class="section-title">📦 Все товары</h2><div class="products-grid">${other.map(p => renderProductCard(p)).join('')}</div>`;
-    if (!filtered.length) html = `<div style="text-align:center;padding:50px">🔍 Ничего не найдено</div>`;
+    if (!searched.length) html += `<div style="text-align:center;padding:50px">🔍 Ничего не найдено<br><small>Попробуйте изменить фильтры</small></div>`;
+    
     document.getElementById('mainContent').innerHTML = html;
-    document.querySelectorAll('.category-chip').forEach(el => {
-        el.addEventListener('click', () => { currentCategory = el.dataset.cat; renderShopPage(); });
+    
+    // Обработчики фильтров
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const filterType = btn.dataset.filter;
+            const value = btn.dataset.value;
+            
+            if (filterType === 'gender') currentGender = value;
+            if (filterType === 'category') currentCategory = value;
+            if (filterType === 'size') currentSize = value;
+            
+            renderShopPage();
+        });
     });
 }
 
 function renderSalesPage() {
     if (!products.length) { document.getElementById('mainContent').innerHTML = '<div style="text-align:center; padding:50px">Загрузка...</div>'; return; }
     const saleProducts = products.filter(p => p.sale === true);
-    let html = `<h2 class="section-title">🔥 Акции</h2><div class="products-grid">${saleProducts.length ? saleProducts.map(p => renderProductCard(p)).join('') : '<div style="text-align:center;padding:50px">Нет товаров по акции</div>'}</div>`;
+    let html = renderFilters();
+    html += `<h2 class="section-title">🔥 Акции</h2><div class="products-grid">${saleProducts.length ? saleProducts.map(p => renderProductCard(p)).join('') : '<div style="text-align:center;padding:50px">Нет товаров по акции</div>'}</div>`;
     document.getElementById('mainContent').innerHTML = html;
+    
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const filterType = btn.dataset.filter;
+            const value = btn.dataset.value;
+            if (filterType === 'gender') currentGender = value;
+            if (filterType === 'category') currentCategory = value;
+            if (filterType === 'size') currentSize = value;
+            renderSalesPage();
+        });
+    });
 }
 
 function renderCartPage() {
@@ -348,7 +466,7 @@ function renderCartPage() {
     let html = `<h2 class="section-title">🛒 Корзина</h2><div class="cart-items-list">`;
     cart.forEach((item, idx) => {
         const itemTotal = item.price * item.quantity;
-        html += `<div class="cart-item"><div class="cart-item-info"><div class="cart-item-title">${escapeHtml(item.name)}</div><div class="cart-item-price">${item.price}₽ × ${item.quantity} = ${itemTotal}₽</div><div class="cart-item-details">${item.selectedSize ? `👕 Размер: ${item.selectedSize}` : ''}</div></div><div class="cart-item-controls"><button class="quantity-btn" data-idx="${idx}" data-delta="-1">−</button><span>${item.quantity}</span><button class="quantity-btn" data-idx="${idx}" data-delta="1">+</button><button class="remove-item" data-idx="${idx}">🗑️</button></div></div>`;
+        html += `<div class="cart-item"><div class="cart-item-info"><div class="cart-item-title">${escapeHtml(item.name)}</div><div class="cart-item-price">${item.price}₽ × ${item.quantity} = ${itemTotal}₽</div><div class="cart-item-details">${item.selectedSize ? `📏 Размер: ${item.selectedSize}` : ''}</div></div><div class="cart-item-controls"><button class="quantity-btn" data-idx="${idx}" data-delta="-1">−</button><span>${item.quantity}</span><button class="quantity-btn" data-idx="${idx}" data-delta="1">+</button><button class="remove-item" data-idx="${idx}">🗑️</button></div></div>`;
     });
     html += `</div><div class="cart-total"><h3>Итого: ${total}₽</h3><button class="checkout-btn" id="checkoutBtn">✅ Оформить заказ</button></div>`;
     document.getElementById('mainContent').innerHTML = html;
@@ -363,7 +481,6 @@ function renderCartPage() {
             saveCart();
             renderCartPage();
             updateCartBadge();
-            if (currentPage === 'shop') renderShopPage();
         });
     });
     
@@ -372,8 +489,7 @@ function renderCartPage() {
             cart.splice(parseInt(btn.dataset.idx), 1); 
             saveCart(); 
             renderCartPage(); 
-            updateCartBadge(); 
-            if (currentPage === 'shop') renderShopPage();
+            updateCartBadge();
         });
     });
     
@@ -473,7 +589,6 @@ function openProductModal(product) {
         updateTotalDisplay();
     }
     
-    // Обработка выбора размера
     if (variantInfo && variantInfo.items && variantInfo.items.length) {
         setTimeout(() => {
             document.querySelectorAll('.variant-option').forEach(btn => {
