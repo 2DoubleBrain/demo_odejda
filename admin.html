@@ -190,29 +190,7 @@
             display: block;
         }
         
-        .price-row {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 10px;
-            flex-wrap: wrap;
-        }
-        
-        .price-row label {
-            width: 110px;
-            font-size: 13px;
-            font-weight: 500;
-        }
-        
-        .price-row input {
-            flex: 1;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 12px;
-            font-size: 14px;
-        }
-        
-        .variants-list {
+        .sizes-list {
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
@@ -220,7 +198,7 @@
             margin-bottom: 10px;
         }
         
-        .variant-tag {
+        .size-tag {
             background: #e0e0e0;
             padding: 6px 12px;
             border-radius: 30px;
@@ -230,7 +208,7 @@
             gap: 8px;
         }
         
-        .variant-tag button {
+        .size-tag button {
             background: none;
             border: none;
             cursor: pointer;
@@ -239,14 +217,14 @@
             font-weight: bold;
         }
         
-        .add-variant {
+        .add-size {
             display: flex;
             gap: 8px;
             margin-top: 10px;
             flex-wrap: wrap;
         }
         
-        .add-variant input {
+        .add-size input {
             flex: 1;
             padding: 12px;
             border-radius: 30px;
@@ -254,7 +232,7 @@
             font-size: 14px;
         }
         
-        .add-variant button {
+        .add-size button {
             padding: 12px 20px;
             background: #1a1a2e;
             color: #FFD700;
@@ -308,33 +286,6 @@
         
         .add-category button {
             padding: 14px 20px;
-        }
-        
-        .price-edit-group {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-            margin-bottom: 12px;
-            padding: 10px;
-            background: #f9f9f9;
-            border-radius: 14px;
-            flex-wrap: wrap;
-        }
-        
-        .price-edit-group label {
-            font-size: 13px;
-            flex: 1;
-            min-width: 100px;
-        }
-        
-        .price-edit-input {
-            width: 120px;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 12px;
-            text-align: right;
-            font-size: 14px;
         }
         
         .search-box {
@@ -412,6 +363,32 @@
             flex: 1;
         }
         
+        .price-edit-group {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 12px;
+            padding: 10px;
+            background: #f9f9f9;
+            border-radius: 14px;
+        }
+        
+        .price-edit-group label {
+            font-size: 14px;
+            font-weight: 600;
+            flex: 1;
+        }
+        
+        .price-edit-input {
+            width: 120px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            text-align: right;
+            font-size: 14px;
+        }
+        
         @media (max-width: 480px) {
             body {
                 padding: 8px;
@@ -432,9 +409,6 @@
                 width: 40px;
                 height: 40px;
             }
-            .price-edit-input {
-                width: 100px;
-            }
         }
     </style>
 </head>
@@ -453,7 +427,7 @@
     <!-- Админ панель -->
     <div id="adminPanel" style="display: none;">
         <div class="card">
-            <h2>📦 Nova Fashion - Управление магазином</h2>
+            <h2>👗 Nova Fashion - Управление магазином</h2>
             
             <div class="tabs">
                 <button class="tab-btn active" data-tab="products">📋 Товары</button>
@@ -487,6 +461,16 @@
                             <select id="productCategory"></select>
                         </div>
                         <div class="form-group">
+                            <label>Для кого</label>
+                            <select id="productGender">
+                                <option value="all">👥 Все</option>
+                                <option value="boy">👦 Мальчик</option>
+                                <option value="girl">👧 Девочка</option>
+                                <option value="man">👨 Мужчина</option>
+                                <option value="woman">👩 Женщина</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
                             <label>Акция</label>
                             <select id="productSale">
                                 <option value="false">Нет</option>
@@ -495,25 +479,22 @@
                         </div>
                     </div>
                     <div class="form-group">
+                        <label>Цена (₽)</label>
+                        <input type="number" id="productPrice" placeholder="1990" required>
+                    </div>
+                    <div class="form-group">
                         <label>Фото (ссылка)</label>
                         <input type="text" id="productPhoto" placeholder="https://...">
                         <small style="color:#888; font-size:11px;">Загрузите на postimages.org → вставьте прямую ссылку</small>
                     </div>
                     <div class="form-group">
-                        <label>Цены</label>
-                        <div class="price-row"><label>3 000 - 10 000 ₽:</label><input type="number" id="price1" placeholder="Цена"></div>
-                        <div class="price-row"><label>10 000 - 30 000 ₽:</label><input type="number" id="price2" placeholder="Цена"></div>
-                        <div class="price-row"><label>30 000 - 50 000 ₽:</label><input type="number" id="price3" placeholder="Цена"></div>
-                        <div class="price-row"><label>50 000 - 100 000 ₽:</label><input type="number" id="price4" placeholder="Цена"></div>
-                        <div class="price-row"><label>100 000+ ₽:</label><input type="number" id="price5" placeholder="Цена"></div>
-                    </div>
-                    <div class="form-group">
-                        <label>Варианты (вкусы/цвета/сопротивления)</label>
-                        <div id="variantsList" class="variants-list"></div>
-                        <div class="add-variant">
-                            <input type="text" id="newVariant" placeholder="Например: Клубника">
-                            <button type="button" onclick="addVariant()">➕ Добавить</button>
+                        <label>Размеры</label>
+                        <div id="sizesList" class="sizes-list"></div>
+                        <div class="add-size">
+                            <input type="text" id="newSize" placeholder="Например: M, 42, XL">
+                            <button type="button" onclick="addSize()">➕ Добавить размер</button>
                         </div>
+                        <small style="color:#888; font-size:11px;">Для одежды: XS,S,M,L,XL,XXL | Для обуви: 39,40,41,42...</small>
                     </div>
                     <button type="submit" class="btn btn-success btn-block" id="saveProductBtn">💾 Сохранить товар</button>
                 </form>
@@ -555,17 +536,16 @@
                 </div>
                 <button class="btn btn-primary btn-block" onclick="saveSettings()">💾 Сохранить настройки</button>
                 <hr>
-                <!-- Кнопки поменяны местами: сначала Сохранить на сервер, потом Экспорт -->
                 <button class="btn btn-success btn-block" onclick="saveToGitHub()">💾 Сохранить на сервер</button>
                 <button class="btn btn-warning btn-block" onclick="exportAllData()" style="margin-top: 10px;">📤 Экспортировать data.json</button>
             </div>
         </div>
         
-        <!-- Модальное окно редактирования цен -->
+        <!-- Модальное окно редактирования цены -->
         <div id="priceModal" class="modal-overlay">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3 id="priceModalTitle">💰 Редактирование цен</h3>
+                    <h3 id="priceModalTitle">💰 Редактирование цены</h3>
                     <button class="close-modal" onclick="closePriceModal()">×</button>
                 </div>
                 <div id="priceModalBody"></div>
@@ -581,11 +561,11 @@
 <script>
     // ============ ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ============
     let products = [];
-    let categories = ["Электронки", "Жидкости", "Под-системы", "Испарители", "Картриджи", "Снюс"];
+    let categories = ["Одежда", "Обувь", "Аксессуары"];
     let shopConfig = { contactPhone: "", managerTgId: "", botToken: "" };
-    let currentVariants = [];
+    let currentSizes = [];
     let editingProductId = null;
-    let tempPriceRanges = {};
+    let tempPrice = 0;
     
     let githubConfig = { repo: "", token: null };
     
@@ -616,13 +596,12 @@
         document.getElementById('productName').value = '';
         document.getElementById('productDesc').value = '';
         document.getElementById('productPhoto').value = '';
-        document.getElementById('price1').value = '';
-        document.getElementById('price2').value = '';
-        document.getElementById('price3').value = '';
-        document.getElementById('price4').value = '';
-        document.getElementById('price5').value = '';
-        currentVariants = [];
-        renderVariantsList();
+        document.getElementById('productPrice').value = '';
+        document.getElementById('productCategory').value = categories[0] || 'Одежда';
+        document.getElementById('productGender').value = 'all';
+        document.getElementById('productSale').value = 'false';
+        currentSizes = [];
+        renderSizesList();
         editingProductId = null;
     }
     
@@ -655,7 +634,7 @@
             }
         } catch(e) { console.log('Новый файл data.json'); }
         
-        const savedToken = localStorage.getItem('amigoopt_github_token');
+        const savedToken = localStorage.getItem('nova_github_token');
         if (savedToken) {
             githubConfig.token = savedToken;
             document.getElementById('githubToken').value = savedToken;
@@ -689,17 +668,18 @@
         }
         
         let html = `<div style="overflow-x: auto;"><table class="products-table">
-            <thead><tr><th>Фото</th><th>Название</th><th>Категория</th><th>Цены</th><th></th></tr></thead>
+            <thead><tr><th>Фото</th><th>Название</th><th>Категория</th><th>Для кого</th><th>Цена</th><th></th></tr></thead>
             <tbody>`;
         filtered.forEach(p => {
-            const minPrice = p.priceRanges ? Math.min(...Object.values(p.priceRanges).filter(v => v > 0)) : 0;
+            const genderIcon = p.gender === 'boy' ? '👦' : p.gender === 'girl' ? '👧' : p.gender === 'man' ? '👨' : p.gender === 'woman' ? '👩' : '👥';
             html += `<tr>
                 <td><img src="${p.photo || 'https://placehold.co/50x50/eee/ccc?text=No'}" class="product-photo" onerror="this.src='https://placehold.co/50x50/eee/ccc?text=No'"></td>
                 <td><strong>${escapeHtml(p.name)}</strong><br><small>${(p.description || '').substring(0, 35)}</small></td>
                 <td>${p.category || '-'}</td>
-                <td>от ${minPrice}₽</td>
+                <td>${genderIcon} ${p.gender === 'all' ? 'Все' : p.gender === 'boy' ? 'Мальчик' : p.gender === 'girl' ? 'Девочка' : p.gender === 'man' ? 'Мужчина' : 'Женщина'}</td>
+                <td>${p.price}₽</td>
                 <td>
-                    <button class="btn btn-warning btn-sm" onclick="editPrices(${p.id})" style="margin:2px;">💰</button>
+                    <button class="btn btn-warning btn-sm" onclick="editPrice(${p.id})" style="margin:2px;">💰</button>
                     <button class="btn btn-warning btn-sm" onclick="editProduct(${p.id})" style="margin:2px;">✏️</button>
                     <button class="btn btn-danger btn-sm" onclick="deleteProduct(${p.id})" style="margin:2px;">🗑️</button>
                 </td>
@@ -711,44 +691,30 @@
     
     function filterProducts() { renderProductsList(); }
     
-    // ============ РЕДАКТИРОВАНИЕ ЦЕН ============
-    function editPrices(productId) {
+    // ============ РЕДАКТИРОВАНИЕ ЦЕНЫ ============
+    function editPrice(productId) {
         const product = products.find(p => p.id === productId);
         if (!product) return;
         editingProductId = productId;
-        tempPriceRanges = { ...product.priceRanges };
+        tempPrice = product.price;
         
-        const ranges = [
-            { key: '3000-10000', label: '3 000 - 10 000 ₽' },
-            { key: '10000-30000', label: '10 000 - 30 000 ₽' },
-            { key: '30000-50000', label: '30 000 - 50 000 ₽' },
-            { key: '50000-100000', label: '50 000 - 100 000 ₽' },
-            { key: '100000-999999', label: '100 000+ ₽' }
-        ];
-        
-        let bodyHtml = `<div style="margin-bottom: 15px;"><strong>${escapeHtml(product.name)}</strong></div>`;
-        ranges.forEach(r => {
-            bodyHtml += `<div class="price-edit-group">
-                <label>💰 ${r.label}:</label>
-                <input type="number" id="price_${r.key}" value="${tempPriceRanges[r.key] || 0}" class="price-edit-input" onchange="updateTempPrice('${r.key}', this.value)">
-            </div>`;
-        });
-        
-        document.getElementById('priceModalTitle').innerText = `💰 Цены: ${product.name}`;
-        document.getElementById('priceModalBody').innerHTML = bodyHtml;
+        document.getElementById('priceModalTitle').innerHTML = `💰 Цена: ${escapeHtml(product.name)}`;
+        document.getElementById('priceModalBody').innerHTML = `
+            <div class="price-edit-group">
+                <label>💰 Цена (₽):</label>
+                <input type="number" id="editPrice" value="${tempPrice}" class="price-edit-input" onchange="tempPrice = this.value">
+            </div>
+        `;
         document.getElementById('priceModal').style.display = 'flex';
-    }
-    
-    function updateTempPrice(key, value) {
-        tempPriceRanges[key] = parseInt(value) || 0;
     }
     
     function savePriceChanges() {
         if (editingProductId) {
+            const newPrice = parseInt(document.getElementById('editPrice')?.value) || 0;
             const index = products.findIndex(p => p.id === editingProductId);
             if (index !== -1) {
-                products[index].priceRanges = { ...tempPriceRanges };
-                alert('✅ Цены обновлены! Не забудьте сохранить на сервер.');
+                products[index].price = newPrice;
+                alert('✅ Цена обновлена! Не забудьте сохранить на сервер.');
                 renderProductsList();
             }
         }
@@ -758,7 +724,6 @@
     function closePriceModal() {
         document.getElementById('priceModal').style.display = 'none';
         editingProductId = null;
-        tempPriceRanges = {};
     }
     
     // ============ УПРАВЛЕНИЕ КАТЕГОРИЯМИ ============
@@ -804,30 +769,30 @@
         alert(`✅ Категория "${category}" удалена`);
     }
     
-    // ============ УПРАВЛЕНИЕ ВАРИАНТАМИ ============
-    function addVariant() {
-        const input = document.getElementById('newVariant');
-        const val = input.value.trim();
-        if (val && !currentVariants.includes(val)) {
-            currentVariants.push(val);
-            renderVariantsList();
+    // ============ УПРАВЛЕНИЕ РАЗМЕРАМИ ============
+    function addSize() {
+        const input = document.getElementById('newSize');
+        const val = input.value.trim().toUpperCase();
+        if (val && !currentSizes.includes(val)) {
+            currentSizes.push(val);
+            renderSizesList();
             input.value = '';
         }
     }
     
-    function removeVariant(idx) {
-        currentVariants.splice(idx, 1);
-        renderVariantsList();
+    function removeSize(idx) {
+        currentSizes.splice(idx, 1);
+        renderSizesList();
     }
     
-    function renderVariantsList() {
-        const container = document.getElementById('variantsList');
+    function renderSizesList() {
+        const container = document.getElementById('sizesList');
         if (!container) return;
-        if (!currentVariants.length) {
-            container.innerHTML = '<small style="color:#888">Нет вариантов. Добавьте вкусы/цвета</small>';
+        if (!currentSizes.length) {
+            container.innerHTML = '<small style="color:#888">Нет размеров. Добавьте размеры (например: S, M, L или 39, 40, 41)</small>';
             return;
         }
-        container.innerHTML = currentVariants.map((v, i) => `<span class="variant-tag">${escapeHtml(v)}<button onclick="removeVariant(${i})">×</button></span>`).join('');
+        container.innerHTML = currentSizes.map((s, i) => `<span class="size-tag">${escapeHtml(s)}<button onclick="removeSize(${i})">×</button></span>`).join('');
     }
     
     // ============ СОХРАНЕНИЕ ТОВАРА ============
@@ -835,31 +800,16 @@
         e.preventDefault();
         
         const newId = products.length ? Math.max(...products.map(p => p.id)) + 1 : 1;
-        const category = document.getElementById('productCategory').value;
-        let flavors = null, colors = null, resistances = null;
-        
-        if (category === 'Электронки') flavors = currentVariants.length ? currentVariants : null;
-        else if (category === 'Под-системы') colors = currentVariants.length ? currentVariants : null;
-        else if (['Испарители', 'Картриджи'].includes(category)) resistances = currentVariants.length ? currentVariants : null;
-        else flavors = currentVariants.length ? currentVariants : null;
         
         const newProduct = {
             id: newId,
             name: document.getElementById('productName').value,
             description: document.getElementById('productDesc').value,
-            category: category,
-            priceRanges: {
-                "3000-10000": parseInt(document.getElementById('price1')?.value) || 0,
-                "10000-30000": parseInt(document.getElementById('price2')?.value) || 0,
-                "30000-50000": parseInt(document.getElementById('price3')?.value) || 0,
-                "50000-100000": parseInt(document.getElementById('price4')?.value) || 0,
-                "100000-999999": parseInt(document.getElementById('price5')?.value) || 0
-            },
-            flavors: flavors,
-            colors: colors,
-            resistances: resistances,
+            category: document.getElementById('productCategory').value,
+            gender: document.getElementById('productGender').value,
+            price: parseInt(document.getElementById('productPrice').value) || 0,
+            sizes: currentSizes.length ? currentSizes : null,
             sale: document.getElementById('productSale').value === 'true',
-            salePrice: null,
             photo: document.getElementById('productPhoto').value || '',
             popular: false
         };
@@ -882,23 +832,14 @@
         // Заполняем форму
         document.getElementById('productName').value = product.name;
         document.getElementById('productDesc').value = product.description || '';
-        document.getElementById('productCategory').value = product.category || 'Электронки';
+        document.getElementById('productCategory').value = product.category || categories[0];
+        document.getElementById('productGender').value = product.gender || 'all';
+        document.getElementById('productPrice').value = product.price || 0;
         document.getElementById('productPhoto').value = product.photo || '';
         document.getElementById('productSale').value = product.sale ? 'true' : 'false';
         
-        if (product.priceRanges) {
-            document.getElementById('price1').value = product.priceRanges['3000-10000'] || 0;
-            document.getElementById('price2').value = product.priceRanges['10000-30000'] || 0;
-            document.getElementById('price3').value = product.priceRanges['30000-50000'] || 0;
-            document.getElementById('price4').value = product.priceRanges['50000-100000'] || 0;
-            document.getElementById('price5').value = product.priceRanges['100000-999999'] || 0;
-        }
-        
-        if (product.flavors) currentVariants = [...product.flavors];
-        else if (product.colors) currentVariants = [...product.colors];
-        else if (product.resistances) currentVariants = [...product.resistances];
-        else currentVariants = [];
-        renderVariantsList();
+        currentSizes = product.sizes ? [...product.sizes] : [];
+        renderSizesList();
         
         // Переключаемся на вкладку "Добавить товар"
         switchToAddTab();
@@ -929,7 +870,7 @@
             return;
         }
         
-        localStorage.setItem('amigoopt_github_token', token);
+        localStorage.setItem('nova_github_token', token);
         
         const data = {
             shopName: 'Nova Fashion',
@@ -1004,7 +945,7 @@
     function saveGithubToken() {
         const token = document.getElementById('githubToken').value;
         if (token && token.startsWith('ghp_')) {
-            localStorage.setItem('amigoopt_github_token', token);
+            localStorage.setItem('nova_github_token', token);
             githubConfig.token = token;
             alert('✅ Токен сохранен!');
         } else {
