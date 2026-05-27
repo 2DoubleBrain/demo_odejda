@@ -18,23 +18,38 @@ let selectedQuantity = 1;
 
 // ============ КОНФИГУРАЦИЯ ============
 const genders = [
-    { id: 'all', name: 'Все', icon: '👥' },
     { id: 'boy', name: 'Мальчик', icon: '👦' },
-    { id: 'girl', name: 'Девочка', icon: '👧' },
+    { id: 'girl', name:Девочка', icon: '👧' },
     { id: 'man', name: 'Мужчина', icon: '👨' },
     { id: 'woman', name: 'Женщина', icon: '👩' }
 ];
+
+// Эмодзи для категорий
+const categoryEmojis = {
+    'Одежда': '👕',
+    'Обувь': '👟',
+    'Аксессуары': '🧢'
+};
 
 // Размеры для одежды
 const clothingSizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL'];
 // Размеры для обуви
 const shoeSizes = ['35', '36', '37', '38', '39', '40', '41', '42', '43', '44', '45', '46', '47'];
 
-// Структура подкатегорий
+// Структура подкатегорий с эмодзи
 const defaultSubcategories = {
-    "Одежда": ["Джинсы", "Брюки", "Футболки", "Рубашки", "Свитеры", "Куртки", "Платья", "Юбки", "Шорты"],
-    "Обувь": ["Кеды и кроссовки", "Шлепанцы", "Тапочки", "Ботинки", "Сапоги", "Туфли"],
-    "Аксессуары": ["Бижутерия", "Брелоки", "Головные уборы", "Перчатки", "Варежки", "Солнцезащитные очки", "Сумки", "Шарфы", "Ремни", "Кошельки"]
+    "Одежда": {
+        emoji: "👕",
+        items: ["Джинсы", "Брюки", "Футболки", "Рубашки", "Свитеры", "Куртки", "Платья", "Юбки", "Шорты"]
+    },
+    "Обувь": {
+        emoji: "👟",
+        items: ["Кеды и кроссовки", "Шлепанцы", "Тапочки", "Ботинки", "Сапоги", "Туфли"]
+    },
+    "Аксессуары": {
+        emoji: "🧢",
+        items: ["Бижутерия", "Брелоки", "Головные уборы", "Перчатки", "Варежки", "Солнцезащитные очки", "Сумки", "Шарфы", "Ремни", "Кошельки"]
+    }
 };
 
 // ============ ПОЛУЧЕНИЕ ИНФОРМАЦИИ О ПОЛЬЗОВАТЕЛЕ ============
@@ -106,7 +121,14 @@ async function loadData() {
         
         products = data.products || [];
         categories = data.categories || ["Одежда", "Обувь", "Аксессуары"];
-        subcategories = data.subcategories || defaultSubcategories;
+        
+        // Загружаем подкатегории с эмодзи
+        if (data.subcategories) {
+            subcategories = data.subcategories;
+        } else {
+            subcategories = defaultSubcategories;
+        }
+        
         shopConfig = {
             shopName: data.shopName || 'Nova Fashion',
             contactPhone: data.contactPhone || '+7 (968) 890-07-44',
@@ -173,9 +195,9 @@ function switchPage(page) {
 function getFilteredProducts() {
     let filtered = [...products];
     
-    // Фильтр по полу (если not all)
+    // Фильтр по полу (если не all)
     if (currentGender !== 'all') {
-        filtered = filtered.filter(p => p.gender === currentGender);
+        filtered = filtered.filter(p => p.gender && p.gender.includes(currentGender));
     }
     
     // Фильтр по категории
@@ -188,8 +210,8 @@ function getFilteredProducts() {
         filtered = filtered.filter(p => p.subcategory === currentSubcategory);
     }
     
-    // Фильтр по размеру
-    if (currentSize !== 'all') {
+    // Фильтр по размеру (только если выбрана не категория Аксессуары)
+    if (currentSize !== 'all' && currentCategory !== 'Аксессуары') {
         filtered = filtered.filter(p => {
             if (p.sizes && p.sizes.length) {
                 return p.sizes.includes(currentSize);
@@ -203,10 +225,15 @@ function getFilteredProducts() {
 
 function getAvailableSubcategories() {
     if (currentCategory === 'all') return [];
-    return subcategories[currentCategory] || [];
+    const catData = subcategories[currentCategory];
+    if (catData && catData.items) return catData.items;
+    return [];
 }
 
 function getAvailableSizes() {
+    // Для аксессуаров не показываем фильтр размеров
+    if (currentCategory === 'Аксессуары') return [];
+    
     const filtered = getFilteredProducts();
     const allSizes = new Set();
     filtered.forEach(p => {
@@ -357,21 +384,28 @@ function renderProductCard(product) {
     const productJson = JSON.stringify(product).replace(/'/g, "&#39;").replace(/"/g, '&quot;');
     const rightContent = product.sale ? '<span class="sale-badge">🔥 SALE</span>' : '<span class="sale-placeholder"></span>';
     
-    let genderIcon = '';
-    if (product.gender === 'boy') genderIcon = '👦 ';
-    else if (product.gender === 'girl') genderIcon = '👧 ';
-    else if (product.gender === 'man') genderIcon = '👨 ';
-    else if (product.gender === 'woman') genderIcon = '👩 ';
+    // Иконки для кого
+    let genderIcons = '';
+    if (product.gender && product.gender.length) {
+        const genderNames = {
+            'boy': '👦', 'girl': '👧', 'man': '👨', 'woman': '👩'
+        };
+        genderIcons = product.gender.map(g => genderNames[g] || '').join(' ');
+    }
+    
+    // Эмодзи категории
+    const catEmoji = categoryEmojis[product.category] || '📦';
     
     return `
         <div class="product-card" onclick='openProductModal(${productJson})'>
             <img src="${product.photo || 'https://placehold.co/300x200/eee/999?text=No+Image'}" class="product-image" onerror="this.src='https://placehold.co/300x200/eee/999?text=No+Image'">
             <div class="product-info">
-                <div class="product-name">${genderIcon}${escapeHtml(product.name)}</div>
+                <div class="product-name">${catEmoji} ${escapeHtml(product.name)}</div>
                 <div class="product-price-wrapper">
                     <span class="product-price">${displayPrice}₽</span>
                     ${rightContent}
                 </div>
+                <div class="product-gender-icons">${genderIcons}</div>
                 <button class="open-btn">Выбрать размер</button>
             </div>
         </div>
@@ -381,12 +415,14 @@ function renderProductCard(product) {
 function renderFilters() {
     const availableSubcategories = getAvailableSubcategories();
     const availableSizes = getAvailableSizes();
+    const showSizeFilter = currentCategory !== 'Аксессуары';
     
     let html = `
         <div class="filters-container">
             <div class="filter-section">
                 <div class="filter-title">👥 Для кого</div>
                 <div class="filter-buttons">
+                    <button class="filter-btn ${currentGender === 'all' ? 'active' : ''}" data-filter="gender" data-value="all">👥 Все</button>
                     ${genders.map(g => `<button class="filter-btn ${currentGender === g.id ? 'active' : ''}" data-filter="gender" data-value="${g.id}">${g.icon} ${g.name}</button>`).join('')}
                 </div>
             </div>
@@ -395,7 +431,7 @@ function renderFilters() {
                 <div class="filter-title">📁 Категория</div>
                 <div class="filter-buttons">
                     <button class="filter-btn ${currentCategory === 'all' ? 'active' : ''}" data-filter="category" data-value="all">📦 Все</button>
-                    ${categories.map(c => `<button class="filter-btn ${currentCategory === c ? 'active' : ''}" data-filter="category" data-value="${c}">${c === 'Одежда' ? '👕' : c === 'Обувь' ? '👟' : '🧢'} ${c}</button>`).join('')}
+                    ${categories.map(c => `<button class="filter-btn ${currentCategory === c ? 'active' : ''}" data-filter="category" data-value="${c}">${categoryEmojis[c] || '📦'} ${c}</button>`).join('')}
                 </div>
             </div>
             
@@ -404,11 +440,15 @@ function renderFilters() {
                 <div class="filter-title">📂 Подкатегория</div>
                 <div class="filter-buttons">
                     <button class="filter-btn ${currentSubcategory === 'all' ? 'active' : ''}" data-filter="subcategory" data-value="all">Все</button>
-                    ${availableSubcategories.map(s => `<button class="filter-btn ${currentSubcategory === s ? 'active' : ''}" data-filter="subcategory" data-value="${s}">📌 ${s}</button>`).join('')}
+                    ${availableSubcategories.map(s => {
+                        const catEmoji = subcategories[currentCategory]?.emoji || '📌';
+                        return `<button class="filter-btn ${currentSubcategory === s ? 'active' : ''}" data-filter="subcategory" data-value="${s}">${catEmoji} ${s}</button>`;
+                    }).join('')}
                 </div>
             </div>
             ` : ''}
             
+            ${showSizeFilter && availableSizes.length > 0 ? `
             <div class="filter-section">
                 <div class="filter-title">📏 Размер</div>
                 <div class="filter-buttons">
@@ -416,6 +456,7 @@ function renderFilters() {
                     ${availableSizes.map(s => `<button class="filter-btn ${currentSize === s ? 'active' : ''}" data-filter="size" data-value="${s}">${s}</button>`).join('')}
                 </div>
             </div>
+            ` : ''}
             
             <div class="filter-reset">
                 <button class="reset-btn" onclick="resetFilters()">🔄 Сбросить все фильтры</button>
