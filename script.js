@@ -1,11 +1,13 @@
 // ============ ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ============
 let products = [];
 let categories = [];
+let subcategories = {};
 let shopConfig = {};
 let cart = [];
 let currentPage = 'shop';
 let currentGender = 'all';
 let currentCategory = 'all';
+let currentSubcategory = 'all';
 let currentSize = 'all';
 
 // Переменные для модального окна
@@ -27,6 +29,13 @@ const genders = [
 const clothingSizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL'];
 // Размеры для обуви
 const shoeSizes = ['35', '36', '37', '38', '39', '40', '41', '42', '43', '44', '45', '46', '47'];
+
+// Структура подкатегорий
+const defaultSubcategories = {
+    "Одежда": ["Джинсы", "Брюки", "Футболки", "Рубашки", "Свитеры", "Куртки", "Платья", "Юбки", "Шорты"],
+    "Обувь": ["Кеды и кроссовки", "Шлепанцы", "Тапочки", "Ботинки", "Сапоги", "Туфли"],
+    "Аксессуары": ["Бижутерия", "Брелоки", "Головные уборы", "Перчатки", "Варежки", "Солнцезащитные очки", "Сумки", "Шарфы", "Ремни", "Кошельки"]
+};
 
 // ============ ПОЛУЧЕНИЕ ИНФОРМАЦИИ О ПОЛЬЗОВАТЕЛЕ ============
 function getUserInfo() {
@@ -97,6 +106,7 @@ async function loadData() {
         
         products = data.products || [];
         categories = data.categories || ["Одежда", "Обувь", "Аксессуары"];
+        subcategories = data.subcategories || defaultSubcategories;
         shopConfig = {
             shopName: data.shopName || 'Nova Fashion',
             contactPhone: data.contactPhone || '+7 (968) 890-07-44',
@@ -163,7 +173,7 @@ function switchPage(page) {
 function getFilteredProducts() {
     let filtered = [...products];
     
-    // Фильтр по полу
+    // Фильтр по полу (если not all)
     if (currentGender !== 'all') {
         filtered = filtered.filter(p => p.gender === currentGender);
     }
@@ -173,7 +183,12 @@ function getFilteredProducts() {
         filtered = filtered.filter(p => p.category === currentCategory);
     }
     
-    // Фильтр по размеру (только если выбран конкретный размер)
+    // Фильтр по подкатегории
+    if (currentSubcategory !== 'all') {
+        filtered = filtered.filter(p => p.subcategory === currentSubcategory);
+    }
+    
+    // Фильтр по размеру
     if (currentSize !== 'all') {
         filtered = filtered.filter(p => {
             if (p.sizes && p.sizes.length) {
@@ -186,6 +201,11 @@ function getFilteredProducts() {
     return filtered;
 }
 
+function getAvailableSubcategories() {
+    if (currentCategory === 'all') return [];
+    return subcategories[currentCategory] || [];
+}
+
 function getAvailableSizes() {
     const filtered = getFilteredProducts();
     const allSizes = new Set();
@@ -195,7 +215,6 @@ function getAvailableSizes() {
         }
     });
     return Array.from(allSizes).sort((a, b) => {
-        // Сортировка размеров: сначала числа, потом буквы
         if (isNaN(parseInt(a)) && !isNaN(parseInt(b))) return 1;
         if (!isNaN(parseInt(a)) && isNaN(parseInt(b))) return -1;
         if (!isNaN(parseInt(a)) && !isNaN(parseInt(b))) return parseInt(a) - parseInt(b);
@@ -206,6 +225,7 @@ function getAvailableSizes() {
 function resetFilters() {
     currentGender = 'all';
     currentCategory = 'all';
+    currentSubcategory = 'all';
     currentSize = 'all';
     renderShopPage();
 }
@@ -337,7 +357,6 @@ function renderProductCard(product) {
     const productJson = JSON.stringify(product).replace(/'/g, "&#39;").replace(/"/g, '&quot;');
     const rightContent = product.sale ? '<span class="sale-badge">🔥 SALE</span>' : '<span class="sale-placeholder"></span>';
     
-    // Иконка пола
     let genderIcon = '';
     if (product.gender === 'boy') genderIcon = '👦 ';
     else if (product.gender === 'girl') genderIcon = '👧 ';
@@ -360,6 +379,7 @@ function renderProductCard(product) {
 }
 
 function renderFilters() {
+    const availableSubcategories = getAvailableSubcategories();
     const availableSizes = getAvailableSizes();
     
     let html = `
@@ -378,6 +398,16 @@ function renderFilters() {
                     ${categories.map(c => `<button class="filter-btn ${currentCategory === c ? 'active' : ''}" data-filter="category" data-value="${c}">${c === 'Одежда' ? '👕' : c === 'Обувь' ? '👟' : '🧢'} ${c}</button>`).join('')}
                 </div>
             </div>
+            
+            ${currentCategory !== 'all' && availableSubcategories.length > 0 ? `
+            <div class="filter-section">
+                <div class="filter-title">📂 Подкатегория</div>
+                <div class="filter-buttons">
+                    <button class="filter-btn ${currentSubcategory === 'all' ? 'active' : ''}" data-filter="subcategory" data-value="all">Все</button>
+                    ${availableSubcategories.map(s => `<button class="filter-btn ${currentSubcategory === s ? 'active' : ''}" data-filter="subcategory" data-value="${s}">📌 ${s}</button>`).join('')}
+                </div>
+            </div>
+            ` : ''}
             
             <div class="filter-section">
                 <div class="filter-title">📏 Размер</div>
@@ -421,15 +451,23 @@ function renderShopPage() {
     
     document.getElementById('mainContent').innerHTML = html;
     
-    // Обработчики фильтров
     document.querySelectorAll('.filter-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.stopPropagation();
             const filterType = btn.dataset.filter;
             const value = btn.dataset.value;
             
-            if (filterType === 'gender') currentGender = value;
-            if (filterType === 'category') currentCategory = value;
+            if (filterType === 'gender') {
+                currentGender = value;
+                currentSubcategory = 'all';
+                currentSize = 'all';
+            }
+            if (filterType === 'category') {
+                currentCategory = value;
+                currentSubcategory = 'all';
+                currentSize = 'all';
+            }
+            if (filterType === 'subcategory') currentSubcategory = value;
             if (filterType === 'size') currentSize = value;
             
             renderShopPage();
@@ -451,6 +489,7 @@ function renderSalesPage() {
             const value = btn.dataset.value;
             if (filterType === 'gender') currentGender = value;
             if (filterType === 'category') currentCategory = value;
+            if (filterType === 'subcategory') currentSubcategory = value;
             if (filterType === 'size') currentSize = value;
             renderSalesPage();
         });
@@ -502,7 +541,7 @@ function renderContactsPage() {
     document.getElementById('mainContent').innerHTML = `<div class="contacts-page"><h2 class="section-title">📞 Контакты</h2><div class="contact-phone">${phone}</div><p>Свяжитесь с нами любым удобным способом</p><p style="margin-top:20px; color:#888">Работаем ежедневно 10:00-21:00</p></div>`;
 }
 
-// ============ МОДАЛЬНОЕ ОКНО ТОВАРА С ВЫБОРОМ РАЗМЕРА ============
+// ============ МОДАЛЬНОЕ ОКНО ТОВАРА ============
 function openProductModal(product) {
     currentProduct = product;
     selectedSize = null;
