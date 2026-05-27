@@ -91,6 +91,81 @@ body {
     padding-left: 12px;
 }
 
+/* ============ ФИЛЬТРЫ ============ */
+.filters-container {
+    background: white;
+    border-radius: 20px;
+    padding: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.filter-section {
+    margin-bottom: 15px;
+}
+
+.filter-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1a1a2e;
+    margin-bottom: 10px;
+}
+
+.filter-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.filter-btn {
+    background: #f0f0f0;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 30px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.filter-btn.active {
+    background: #1a1a2e;
+    color: #FFD700;
+}
+
+.filter-reset {
+    margin-top: 10px;
+    text-align: center;
+}
+
+.reset-btn {
+    background: none;
+    border: 1px solid #ddd;
+    padding: 8px 20px;
+    border-radius: 30px;
+    font-size: 13px;
+    cursor: pointer;
+    color: #888;
+}
+
+.reset-btn:active {
+    background: #f0f0f0;
+}
+
+.products-count {
+    font-size: 13px;
+    color: #888;
+    margin-bottom: 15px;
+    text-align: right;
+}
+
+/* Иконки для кого на карточке */
+.product-gender-icons {
+    font-size: 14px;
+    text-align: center;
+    margin-bottom: 8px;
+    color: #888;
+}
+
 .categories-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
@@ -163,7 +238,7 @@ body {
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    margin: 8px 0 12px 0;
+    margin: 8px 0 8px 0;
     width: 100%;
     min-height: 32px;
 }
@@ -310,30 +385,6 @@ body {
     justify-content: center;
     font-size: 12px;
     font-weight: bold;
-}
-
-.range-options {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-bottom: 20px;
-}
-
-.range-btn {
-    padding: 14px;
-    border: 1px solid #e0e0e0;
-    border-radius: 14px;
-    background: white;
-    cursor: pointer;
-    text-align: left;
-    font-size: 14px;
-    transition: all 0.2s;
-}
-
-.range-btn.selected {
-    border-color: #FFD700;
-    background: #fff9e6;
-    border-width: 2px;
 }
 
 .variants-grid {
@@ -525,16 +576,6 @@ body {
     font-size: 16px;
 }
 
-.range-notification {
-    background: #e8f5e9;
-    border-left: 4px solid #4caf50;
-    padding: 12px;
-    margin-bottom: 15px;
-    border-radius: 12px;
-    font-size: 13px;
-    color: #2e7d32;
-}
-
 .bottom-nav {
     position: fixed;
     bottom: 0;
@@ -662,79 +703,4 @@ body {
     .contacts-page {
         padding: 30px 20px;
     }
-}
-
-/* ============ ФИЛЬТРЫ ============ */
-.filters-container {
-    background: white;
-    border-radius: 20px;
-    padding: 15px;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-}
-
-.filter-section {
-    margin-bottom: 15px;
-}
-
-.filter-title {
-    font-size: 14px;
-    font-weight: 600;
-    color: #1a1a2e;
-    margin-bottom: 10px;
-}
-
-.filter-buttons {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-}
-
-.filter-btn {
-    background: #f0f0f0;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 30px;
-    font-size: 13px;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.filter-btn.active {
-    background: #1a1a2e;
-    color: #FFD700;
-}
-
-.filter-reset {
-    margin-top: 10px;
-    text-align: center;
-}
-
-.reset-btn {
-    background: none;
-    border: 1px solid #ddd;
-    padding: 8px 20px;
-    border-radius: 30px;
-    font-size: 13px;
-    cursor: pointer;
-    color: #888;
-}
-
-.reset-btn:active {
-    background: #f0f0f0;
-}
-
-.products-count {
-    font-size: 13px;
-    color: #888;
-    margin-bottom: 15px;
-    text-align: right;
-}
-
-/* Иконки для кого на карточке */
-.product-gender-icons {
-    font-size: 14px;
-    text-align: center;
-    margin-bottom: 8px;
-    color: #888;
 }
