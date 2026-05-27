@@ -730,3 +730,11 @@ body {
     margin-bottom: 15px;
     text-align: right;
 }
+
+/* Иконки для кого на карточке */
+.product-gender-icons {
+    font-size: 14px;
+    text-align: center;
+    margin-bottom: 8px;
+    color: #888;
+}
