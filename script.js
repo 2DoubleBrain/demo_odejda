@@ -5,27 +5,21 @@ let shopConfig = {};
 let cart = [];
 let currentPage = 'shop';
 let currentCategory = 'all';
-let currentPriceRange = null;
 
 // Переменные для модального окна
 let currentProduct = null;
-let selectedRange = null;
+let selectedSize = null;
 let selectedPrice = null;
-let selectedVariant = null;
 let selectedQuantity = 1;
 
-// ============ КОНФИГУРАЦИЯ ЦЕНОВЫХ ДИАПАЗОНОВ ============
-const priceRangesConfig = [
-    { key: '3000-10000', label: '3 000 - 10 000 ₽', minTotal: 3000, maxTotal: 10000 },
-    { key: '10000-30000', label: '10 000 - 30 000 ₽', minTotal: 10000, maxTotal: 30000 },
-    { key: '30000-50000', label: '30 000 - 50 000 ₽', minTotal: 30000, maxTotal: 50000 },
-    { key: '50000-100000', label: '50 000 - 100 000 ₽', minTotal: 50000, maxTotal: 100000 },
-    { key: '100000-999999', label: '100 000+ ₽', minTotal: 100000, maxTotal: 999999 }
-];
+// ============ КОНФИГУРАЦИЯ РАЗМЕРОВ ============
+// Размеры для одежды
+const clothingSizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL'];
+// Размеры для обуви (кроссовки)
+const shoeSizes = ['39', '40', '41', '42', '43', '44', '45', '46', '47'];
 
-function getRangeLabel(rangeKey) {
-    const range = priceRangesConfig.find(r => r.key === rangeKey);
-    return range ? range.label : rangeKey;
+function getSizeLabel(size) {
+    return size;
 }
 
 // ============ ПОЛУЧЕНИЕ ИНФОРМАЦИИ О ПОЛЬЗОВАТЕЛЕ ============
@@ -46,7 +40,7 @@ function getUserInfo() {
         }
     }
     
-    const savedUser = localStorage.getItem('amigoopt_user_info');
+    const savedUser = localStorage.getItem('nova_user_info');
     if (savedUser) {
         const parsed = JSON.parse(savedUser);
         if (parsed.userPhone) userPhone = parsed.userPhone;
@@ -65,7 +59,7 @@ function saveUserInfo(phoneNumber = null) {
             let userName = user.first_name || '';
             if (user.last_name) userName += ' ' + user.last_name;
             if (!userName.trim()) userName = 'Пользователь';
-            const existing = localStorage.getItem('amigoopt_user_info');
+            const existing = localStorage.getItem('nova_user_info');
             let existingPhone = null;
             if (existing) {
                 const parsed = JSON.parse(existing);
@@ -77,7 +71,7 @@ function saveUserInfo(phoneNumber = null) {
                 userUsername: user.username ? '@' + user.username : 'Нет username',
                 userPhone: phoneNumber || existingPhone || 'Не указан'
             };
-            localStorage.setItem('amigoopt_user_info', JSON.stringify(userInfo));
+            localStorage.setItem('nova_user_info', JSON.stringify(userInfo));
         }
     }
 }
@@ -96,24 +90,20 @@ async function loadData() {
         console.log('Данные загружены, товаров:', data.products?.length || 0);
         
         products = data.products || [];
-        categories = data.categories || ["Электронки", "Жидкости", "Под-системы", "Испарители", "Картриджи", "Снюс"];
+        categories = data.categories || ["Одежда", "Обувь", "Аксессуары"];
         shopConfig = {
-            shopName: data.shopName || 'AmigoOPT',
+            shopName: data.shopName || 'Nova Fashion',
             contactPhone: data.contactPhone || '+7 (968) 890-07-44',
             managerTgId: data.managerTgId || '5404907427',
             botToken: data.botToken || ''
         };
         
-        const savedCart = localStorage.getItem('amigoopt_cart');
+        const savedCart = localStorage.getItem('nova_cart');
         if (savedCart) {
             try {
                 cart = JSON.parse(savedCart);
-                if (cart.length > 0) recalcCartPrices();
             } catch(e) { cart = []; }
         }
-        
-        const savedRange = localStorage.getItem('amigoopt_price_range');
-        if (savedRange && cart.length > 0) currentPriceRange = savedRange;
         
         if (window.Telegram && window.Telegram.WebApp) window.Telegram.WebApp.expand();
         
@@ -163,92 +153,13 @@ function switchPage(page) {
     updateCartBadge();
 }
 
-// ============ ЛОГИКА ПЕРЕСЧЕТА ЦЕН ============
-function getPriceForRange(product, rangeKey) {
-    if (product.priceRanges && product.priceRanges[rangeKey]) return product.priceRanges[rangeKey];
-    if (product.priceRanges) {
-        const values = Object.values(product.priceRanges);
-        return values.length > 0 ? values[0] : 0;
-    }
-    return 0;
-}
-
+// ============ ЛОГИКА КОРЗИНЫ ============
 function getCartTotal() {
     return cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 }
 
-function getRangeKeyByTotal(total) {
-    for (const range of priceRangesConfig) {
-        if (total >= range.minTotal && total <= range.maxTotal) return range.key;
-    }
-    return '100000-999999';
-}
-
-function recalcCartPrices() {
-    if (!currentPriceRange && cart.length === 0) return;
-    if (cart.length > 0) {
-        const total = getCartTotal();
-        currentPriceRange = getRangeKeyByTotal(total);
-        localStorage.setItem('amigoopt_price_range', currentPriceRange);
-        let changed = false;
-        cart = cart.map(item => {
-            const product = products.find(p => p.id === item.id);
-            if (product) {
-                const newPrice = getPriceForRange(product, currentPriceRange);
-                if (item.price !== newPrice) {
-                    changed = true;
-                    return { ...item, price: newPrice, appliedRange: currentPriceRange };
-                }
-                return { ...item, appliedRange: currentPriceRange };
-            }
-            return item;
-        });
-        if (changed) {
-            saveCart();
-            if (currentPage === 'cart') renderCartPage();
-            updateCartBadge();
-        }
-    }
-}
-
-function checkAndUpdateRangeByTotal() {
-    if (cart.length === 0) {
-        currentPriceRange = null;
-        localStorage.removeItem('amigoopt_price_range');
-        return false;
-    }
-    const total = getCartTotal();
-    const newRangeKey = getRangeKeyByTotal(total);
-    if (newRangeKey !== currentPriceRange) {
-        currentPriceRange = newRangeKey;
-        localStorage.setItem('amigoopt_price_range', newRangeKey);
-        let changed = false;
-        cart = cart.map(item => {
-            const product = products.find(p => p.id === item.id);
-            if (product) {
-                const newPrice = getPriceForRange(product, currentPriceRange);
-                if (item.price !== newPrice) {
-                    changed = true;
-                    return { ...item, price: newPrice, appliedRange: currentPriceRange };
-                }
-                return { ...item, appliedRange: currentPriceRange };
-            }
-            return item;
-        });
-        if (changed) {
-            saveCart();
-            if (currentPage === 'cart') renderCartPage();
-            updateCartBadge();
-            if (currentPage === 'shop') renderShopPage();
-        }
-        return true;
-    }
-    return false;
-}
-
-// ============ КОРЗИНА ============
 function saveCart() {
-    localStorage.setItem('amigoopt_cart', JSON.stringify(cart));
+    localStorage.setItem('nova_cart', JSON.stringify(cart));
     updateCartBadge();
 }
 
@@ -261,10 +172,24 @@ function updateCartBadge() {
     }
 }
 
+function getSizesForProduct(product) {
+    // Если у товара указаны свои размеры (для обуви или одежды)
+    if (product.sizes && product.sizes.length > 0) {
+        return product.sizes;
+    }
+    // Если категория "Обувь" - показываем размеры обуви
+    if (product.category === 'Обувь') {
+        return shoeSizes;
+    }
+    // Иначе - размеры одежды
+    return clothingSizes;
+}
+
 function getVariantType(product) {
-    if (product.flavors && product.flavors.length) return { type: 'flavors', label: 'Выберите вкус', items: product.flavors };
-    if (product.colors && product.colors.length) return { type: 'colors', label: 'Выберите цвет', items: product.colors };
-    if (product.resistances && product.resistances.length) return { type: 'resistances', label: 'Выберите сопротивление', items: product.resistances };
+    const sizes = getSizesForProduct(product);
+    if (sizes && sizes.length > 0) {
+        return { type: 'sizes', label: 'Выберите размер', items: sizes };
+    }
     return null;
 }
 
@@ -333,7 +258,7 @@ function submitOrder() {
     if (!phone) { alert('Введите телефон'); return; }
     
     const userInfo = getUserInfo();
-    let order = '🛍️ <b>НОВЫЙ ЗАКАЗ</b>\n\n━━━━━━━━━━━━━━━━\n<b>📋 ДАННЫЕ ПОКУПАТЕЛЯ</b>\n━━━━━━━━━━━━━━━━\n';
+    let order = '🛍️ <b>НОВЫЙ ЗАКАЗ (Nova Fashion)</b>\n\n━━━━━━━━━━━━━━━━\n<b>📋 ДАННЫЕ ПОКУПАТЕЛЯ</b>\n━━━━━━━━━━━━━━━━\n';
     order += `👤 <b>ФИО:</b> ${fullName}\n🏙️ <b>Город:</b> ${city}\n📍 <b>Адрес:</b> ${address}\n📞 <b>Телефон:</b> ${phone}\n📱 <b>Telegram:</b> ${userInfo.userUsername}\n🆔 <b>ID:</b> <code>${userInfo.userId}</code>\n`;
     if (comment) order += `💬 <b>Комментарий:</b> ${comment}\n`;
     order += `━━━━━━━━━━━━━━━━\n\n<b>🛒 СОСТАВ ЗАКАЗА</b>\n━━━━━━━━━━━━━━━━\n`;
@@ -342,8 +267,7 @@ function submitOrder() {
         const itemTotal = item.price * item.quantity;
         total += itemTotal;
         order += `📦 ${item.name}\n   💰 ${item.price}₽ × ${item.quantity} = ${itemTotal}₽\n`;
-        if (item.selectedRange) order += `   📊 ${item.selectedRange}\n`;
-        if (item.selectedVariant) order += `   🎨 ${item.selectedVariant}\n`;
+        if (item.selectedSize) order += `   👕 Размер: ${item.selectedSize}\n`;
         order += `\n`;
     });
     order += `━━━━━━━━━━━━━━━━\n<b>💰 ИТОГО: ${total}₽</b>\n\n📅 ${new Date().toLocaleString('ru-RU')}`;
@@ -351,8 +275,6 @@ function submitOrder() {
     sendOrderToTelegram(order);
     alert('✅ Заказ оформлен! Менеджер свяжется с вами.');
     cart = [];
-    currentPriceRange = null;
-    localStorage.removeItem('amigoopt_price_range');
     saveCart();
     closeCheckoutModal();
     if (currentPage === 'cart') renderCartPage();
@@ -368,10 +290,8 @@ function escapeHtml(text) {
 }
 
 function renderProductCard(product) {
-    let displayPrice = 0;
-    if (product.priceRanges) {
-        displayPrice = product.priceRanges['100000-999999'] || Object.values(product.priceRanges)[0] || 0;
-    }
+    let displayPrice = product.price || 0;
+    
     const productJson = JSON.stringify(product).replace(/'/g, "&#39;").replace(/"/g, '&quot;');
     const rightContent = product.sale ? '<span class="sale-badge">🔥 SALE</span>' : '<span class="sale-placeholder"></span>';
     
@@ -384,7 +304,7 @@ function renderProductCard(product) {
                     <span class="product-price">${displayPrice}₽</span>
                     ${rightContent}
                 </div>
-                <button class="open-btn">Открыть</button>
+                <button class="open-btn">Выбрать размер</button>
             </div>
         </div>
     `;
@@ -403,7 +323,6 @@ function renderShopPage() {
     let html = `<div class="categories-grid"><div class="category-chip ${currentCategory === 'all' ? 'active' : ''}" data-cat="all">Все</div>`;
     categories.forEach(cat => { html += `<div class="category-chip ${currentCategory === cat ? 'active' : ''}" data-cat="${cat}">${escapeHtml(cat)}</div>`; });
     html += `</div>`;
-    if (currentPriceRange && cart.length > 0) html += `<div class="range-notification">📊 Ваша корзина в диапазоне: ${getRangeLabel(currentPriceRange)}</div>`;
     if (popular.length) html += `<h2 class="section-title">⭐ Популярное</h2><div class="products-grid">${popular.map(p => renderProductCard(p)).join('')}</div>`;
     if (other.length) html += `<h2 class="section-title">📦 Все товары</h2><div class="products-grid">${other.map(p => renderProductCard(p)).join('')}</div>`;
     if (!filtered.length) html = `<div style="text-align:center;padding:50px">🔍 Ничего не найдено</div>`;
@@ -426,15 +345,14 @@ function renderCartPage() {
         return;
     }
     let total = getCartTotal();
-    const currentRangeLabel = currentPriceRange ? getRangeLabel(currentPriceRange) : 'не выбран';
-    let html = `<h2 class="section-title">🛒 Корзина</h2><div class="range-notification">📊 Текущий диапазон: <strong>${currentRangeLabel}</strong><br>💰 Сумма: ${total} ₽</div><div class="cart-items-list">`;
+    let html = `<h2 class="section-title">🛒 Корзина</h2><div class="cart-items-list">`;
     cart.forEach((item, idx) => {
         const itemTotal = item.price * item.quantity;
-        const appliedRangeLabel = item.appliedRange ? getRangeLabel(item.appliedRange) : (item.priceRangeKey ? getRangeLabel(item.priceRangeKey) : currentRangeLabel);
-        html += `<div class="cart-item"><div class="cart-item-info"><div class="cart-item-title">${escapeHtml(item.name)}</div><div class="cart-item-price">${item.price}₽ × ${item.quantity} = ${itemTotal}₽</div><div class="cart-item-details">${item.selectedRange ? `Выбранный диапазон: ${item.selectedRange}<br>` : ''}<small>📊 Диапазон корзины: ${appliedRangeLabel}</small>${item.selectedVariant ? `<br>🎨 ${escapeHtml(item.selectedVariant)}` : ''}</div></div><div class="cart-item-controls"><button class="quantity-btn" data-idx="${idx}" data-delta="-1">−</button><span>${item.quantity}</span><button class="quantity-btn" data-idx="${idx}" data-delta="1">+</button><button class="remove-item" data-idx="${idx}">🗑️</button></div></div>`;
+        html += `<div class="cart-item"><div class="cart-item-info"><div class="cart-item-title">${escapeHtml(item.name)}</div><div class="cart-item-price">${item.price}₽ × ${item.quantity} = ${itemTotal}₽</div><div class="cart-item-details">${item.selectedSize ? `👕 Размер: ${item.selectedSize}` : ''}</div></div><div class="cart-item-controls"><button class="quantity-btn" data-idx="${idx}" data-delta="-1">−</button><span>${item.quantity}</span><button class="quantity-btn" data-idx="${idx}" data-delta="1">+</button><button class="remove-item" data-idx="${idx}">🗑️</button></div></div>`;
     });
     html += `</div><div class="cart-total"><h3>Итого: ${total}₽</h3><button class="checkout-btn" id="checkoutBtn">✅ Оформить заказ</button></div>`;
     document.getElementById('mainContent').innerHTML = html;
+    
     document.querySelectorAll('.quantity-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             const idx = parseInt(btn.dataset.idx);
@@ -443,16 +361,22 @@ function renderCartPage() {
             if (newQty <= 0) cart.splice(idx, 1);
             else cart[idx].quantity = newQty;
             saveCart();
-            const wasUpdated = checkAndUpdateRangeByTotal();
-            if (wasUpdated) alert(`📊 Сумма корзины изменилась. Цены пересчитаны для диапазона ${getRangeLabel(currentPriceRange)}`);
             renderCartPage();
             updateCartBadge();
             if (currentPage === 'shop') renderShopPage();
         });
     });
+    
     document.querySelectorAll('.remove-item').forEach(btn => {
-        btn.addEventListener('click', () => { cart.splice(parseInt(btn.dataset.idx), 1); saveCart(); checkAndUpdateRangeByTotal(); renderCartPage(); updateCartBadge(); if (currentPage === 'shop') renderShopPage(); });
+        btn.addEventListener('click', () => { 
+            cart.splice(parseInt(btn.dataset.idx), 1); 
+            saveCart(); 
+            renderCartPage(); 
+            updateCartBadge(); 
+            if (currentPage === 'shop') renderShopPage();
+        });
     });
+    
     const checkoutBtn = document.getElementById('checkoutBtn');
     if (checkoutBtn) checkoutBtn.addEventListener('click', openCheckoutForm);
 }
@@ -462,40 +386,21 @@ function renderContactsPage() {
     document.getElementById('mainContent').innerHTML = `<div class="contacts-page"><h2 class="section-title">📞 Контакты</h2><div class="contact-phone">${phone}</div><p>Свяжитесь с нами любым удобным способом</p><p style="margin-top:20px; color:#888">Работаем ежедневно 10:00-21:00</p></div>`;
 }
 
-// ============ МОДАЛЬНОЕ ОКНО ТОВАРА ============
+// ============ МОДАЛЬНОЕ ОКНО ТОВАРА С ВЫБОРОМ РАЗМЕРА ============
 function openProductModal(product) {
     currentProduct = product;
-    selectedRange = null;
-    selectedPrice = null;
-    selectedVariant = null;
+    selectedSize = null;
+    selectedPrice = product.price;
     selectedQuantity = 1;
     
     const variantInfo = getVariantType(product);
-    const rangeMap = {
-        '3000-10000': '3 000 - 10 000 ₽',
-        '10000-30000': '10 000 - 30 000 ₽',
-        '30000-50000': '30 000 - 50 000 ₽',
-        '50000-100000': '50 000 - 100 000 ₽',
-        '100000-999999': '100 000+ ₽'
-    };
     
-    let rangesHtml = '<div class="range-options">';
-    if (product.priceRanges) {
-        for (const range of priceRangesConfig) {
-            const price = product.priceRanges[range.key];
-            if (price !== undefined && price > 0) {
-                rangesHtml += `<button class="range-btn" data-range="${range.key}" data-price="${price}">${rangeMap[range.key]} — ${price}₽/шт</button>`;
-            }
-        }
-    }
-    rangesHtml += '</div>';
-    
-    let variantsHtml = '';
+    let sizesHtml = '';
     if (variantInfo && variantInfo.items && variantInfo.items.length) {
-        variantsHtml = `<div id="step2Container" style="display:none;">
-            <div class="step-title"><span class="step-number">2</span> ${variantInfo.label}</div>
-            <div class="variants-grid" id="variantsGrid">
-                ${variantInfo.items.map(v => `<button class="variant-option" data-variant="${escapeHtml(v).replace(/'/g, "\\'")}">${escapeHtml(v)}</button>`).join('')}
+        sizesHtml = `<div id="step1Container">
+            <div class="step-title"><span class="step-number">1</span> ${variantInfo.label}</div>
+            <div class="variants-grid" id="sizesGrid">
+                ${variantInfo.items.map(s => `<button class="variant-option" data-size="${s}">${s}</button>`).join('')}
             </div>
         </div>`;
     }
@@ -511,13 +416,10 @@ function openProductModal(product) {
             <div class="modal-body">
                 <img src="${product.photo || 'https://placehold.co/300x200/eee/999?text=No+Image'}" class="modal-image" onerror="this.src='https://placehold.co/300x200/eee/999?text=No+Image'">
                 <p style="color:#666; margin-bottom:10px;">${escapeHtml(product.description || '')}</p>
-                <div id="step1Container">
-                    <div class="step-title"><span class="step-number">1</span> Выберите сумму заказа</div>
-                    ${rangesHtml}
-                </div>
-                ${variantsHtml}
+                <p style="font-size:18px; font-weight:bold; color:#e74c3c; margin-bottom:15px;">${product.price} ₽</p>
+                ${sizesHtml}
                 <div id="quantityContainer" style="display:none;">
-                    <div class="step-title"><span class="step-number">3</span> Выберите количество</div>
+                    <div class="step-title"><span class="step-number">2</span> Выберите количество</div>
                     <div class="quantity-selector">
                         <label>Количество:</label>
                         <div class="quantity-controls">
@@ -526,9 +428,11 @@ function openProductModal(product) {
                             <button class="quantity-btn-modal" id="increaseQty">+</button>
                         </div>
                     </div>
-                    <div class="total-amount" id="totalAmount">Итого: <span id="totalSum">0</span> ₽</div>
+                    <div class="total-amount" id="totalAmount">
+                        Итого: <span id="totalSum">${product.price}</span> ₽
+                    </div>
                 </div>
-                <button class="add-to-cart-btn disabled" id="addToCartBtn">⬅️ Сначала выберите сумму</button>
+                <button class="add-to-cart-btn disabled" id="addToCartBtn">⬅️ Сначала выберите размер</button>
             </div>
         </div>
     `;
@@ -539,18 +443,9 @@ function openProductModal(product) {
     
     function updateTotalDisplay() {
         const totalSpan = document.getElementById('totalSum');
-        if (totalSpan && selectedPrice) totalSpan.textContent = selectedPrice * selectedQuantity;
-        else if (totalSpan) totalSpan.textContent = '0';
-    }
-    
-    function resetVariantSelection() {
-        selectedVariant = null;
-        document.querySelectorAll('.variant-option').forEach(btn => btn.classList.remove('selected'));
-        const addBtn = document.getElementById('addToCartBtn');
-        addBtn.textContent = '⬅️ Сначала выберите сумму';
-        addBtn.classList.add('disabled');
-        const qc = document.getElementById('quantityContainer');
-        if (qc) qc.style.display = 'none';
+        if (totalSpan && selectedPrice) {
+            totalSpan.textContent = selectedPrice * selectedQuantity;
+        }
     }
     
     function setupQuantityButtons() {
@@ -562,45 +457,23 @@ function openProductModal(product) {
             const newInc = increaseBtn.cloneNode(true);
             decreaseBtn.parentNode.replaceChild(newDec, decreaseBtn);
             increaseBtn.parentNode.replaceChild(newInc, increaseBtn);
-            newDec.onclick = () => { if (selectedQuantity > 1) { selectedQuantity--; quantitySpan.textContent = selectedQuantity; updateTotalDisplay(); } };
-            newInc.onclick = () => { selectedQuantity++; quantitySpan.textContent = selectedQuantity; updateTotalDisplay(); };
+            newDec.onclick = () => { 
+                if (selectedQuantity > 1) { 
+                    selectedQuantity--; 
+                    quantitySpan.textContent = selectedQuantity; 
+                    updateTotalDisplay(); 
+                } 
+            };
+            newInc.onclick = () => { 
+                selectedQuantity++; 
+                quantitySpan.textContent = selectedQuantity; 
+                updateTotalDisplay(); 
+            };
         }
         updateTotalDisplay();
     }
     
-    document.querySelectorAll('.range-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            document.querySelectorAll('.range-btn').forEach(b => b.classList.remove('selected'));
-            btn.classList.add('selected');
-            const newRange = btn.dataset.range;
-            const newPrice = parseInt(btn.dataset.price);
-            if (selectedRange !== newRange) {
-                selectedRange = newRange;
-                selectedPrice = newPrice;
-                resetVariantSelection();
-            } else {
-                selectedRange = newRange;
-                selectedPrice = newPrice;
-            }
-            const vInfo = getVariantType(product);
-            if (vInfo && vInfo.items && vInfo.items.length) {
-                document.getElementById('step1Container').style.opacity = '0.5';
-                const step2 = document.getElementById('step2Container');
-                if (step2) { step2.style.display = 'block'; step2.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
-                document.getElementById('addToCartBtn').textContent = '⬅️ Выберите вариант';
-                document.getElementById('addToCartBtn').classList.add('disabled');
-            } else {
-                document.getElementById('step1Container').style.opacity = '0.5';
-                const qc = document.getElementById('quantityContainer');
-                if (qc) qc.style.display = 'block';
-                document.getElementById('addToCartBtn').textContent = '🛒 Добавить в корзину';
-                document.getElementById('addToCartBtn').classList.remove('disabled');
-                setupQuantityButtons();
-            }
-        });
-    });
-    
+    // Обработка выбора размера
     if (variantInfo && variantInfo.items && variantInfo.items.length) {
         setTimeout(() => {
             document.querySelectorAll('.variant-option').forEach(btn => {
@@ -608,9 +481,11 @@ function openProductModal(product) {
                     e.stopPropagation();
                     document.querySelectorAll('.variant-option').forEach(b => b.classList.remove('selected'));
                     btn.classList.add('selected');
-                    selectedVariant = btn.dataset.variant;
-                    const qc = document.getElementById('quantityContainer');
-                    if (qc) qc.style.display = 'block';
+                    selectedSize = btn.dataset.size;
+                    
+                    const quantityContainer = document.getElementById('quantityContainer');
+                    if (quantityContainer) quantityContainer.style.display = 'block';
+                    
                     document.getElementById('addToCartBtn').textContent = '🛒 Добавить в корзину';
                     document.getElementById('addToCartBtn').classList.remove('disabled');
                     setupQuantityButtons();
@@ -621,18 +496,21 @@ function openProductModal(product) {
     
     const addBtn = document.getElementById('addToCartBtn');
     addBtn.onclick = () => {
-        if (!selectedRange) { alert('Сначала выберите сумму заказа'); return; }
-        const vInfo = getVariantType(product);
-        if (vInfo && vInfo.items && vInfo.items.length && !selectedVariant) { alert('Выберите вариант'); return; }
+        if (!selectedSize) { 
+            alert('Сначала выберите размер'); 
+            return; 
+        }
+        
         cart.push({
-            id: product.id, name: product.name, price: selectedPrice,
-            selectedRange: getRangeLabel(selectedRange), selectedVariant: selectedVariant || null,
-            quantity: selectedQuantity, priceRangeKey: selectedRange
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            selectedSize: selectedSize,
+            quantity: selectedQuantity
         });
+        
         saveCart();
-        const wasUpdated = checkAndUpdateRangeByTotal();
-        if (wasUpdated) alert(`✅ Товар добавлен!\n\n📊 Ваша корзина теперь в диапазоне ${getRangeLabel(currentPriceRange)}. Цены пересчитаны.`);
-        else alert('✅ Товар добавлен в корзину');
+        alert(`✅ ${selectedQuantity} шт "${product.name}" (размер ${selectedSize}) добавлено в корзину`);
         closeModal();
         if (currentPage === 'cart') renderCartPage();
         updateCartBadge();
