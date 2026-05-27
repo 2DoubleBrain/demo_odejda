@@ -1,66 +1,1122 @@
-{
-  "shopName": "Nova Fashion",
-  "contactPhone": "+7 (968) 890-07-44",
-  "managerTgId": "5404907427",
-  "botToken": "8719723110:AAEMJuXTAh6GFXyh881z6Yk5xmIs1uliEYA",
-  "categories": ["Одежда", "Обувь", "Аксессуары"],
-  "subcategories": {
-    "Одежда": ["Джинсы", "Брюки", "Футболки", "Рубашки", "Свитеры", "Куртки", "Платья", "Юбки", "Шорты"],
-    "Обувь": ["Кеды и кроссовки", "Шлепанцы", "Тапочки", "Ботинки", "Сапоги", "Туфли"],
-    "Аксессуары": ["Бижутерия", "Брелоки", "Головные уборы", "Перчатки", "Варежки", "Солнцезащитные очки", "Сумки", "Шарфы", "Ремни", "Кошельки"]
-  },
-  "products": [
-    {
-      "id": 1,
-      "name": "Джинсы классические",
-      "description": "Удобные джинсы из хлопка",
-      "category": "Одежда",
-      "subcategory": "Джинсы",
-      "gender": ["man", "woman"],
-      "price": 3490,
-      "sizes": ["XS", "S", "M", "L", "XL", "XXL"],
-      "sale": false,
-      "photo": "https://placehold.co/300x200/eee/999?text=Jeans",
-      "popular": true
-    },
-    {
-      "id": 2,
-      "name": "Футболка хлопковая",
-      "description": "Мягкая хлопковая футболка",
-      "category": "Одежда",
-      "subcategory": "Футболки",
-      "gender": ["man", "woman", "boy", "girl"],
-      "price": 1290,
-      "sizes": ["XS", "S", "M", "L", "XL"],
-      "sale": true,
-      "photo": "https://placehold.co/300x200/eee/999?text=TShirt",
-      "popular": true
-    },
-    {
-      "id": 3,
-      "name": "Кроссовки спортивные",
-      "description": "Удобные кроссовки для бега",
-      "category": "Обувь",
-      "subcategory": "Кеды и кроссовки",
-      "gender": ["man", "woman"],
-      "price": 4990,
-      "sizes": ["39", "40", "41", "42", "43", "44", "45"],
-      "sale": false,
-      "photo": "https://placehold.co/300x200/eee/999?text=Sneakers",
-      "popular": true
-    },
-    {
-      "id": 4,
-      "name": "Сумка женская",
-      "description": "Стильная сумка из экокожи",
-      "category": "Аксессуары",
-      "subcategory": "Сумки",
-      "gender": ["woman"],
-      "price": 2990,
-      "sizes": null,
-      "sale": false,
-      "photo": "https://placehold.co/300x200/eee/999?text=Bag",
-      "popular": false
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <title>Nova Fashion - Админ панель</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f0f2f5;
+            padding: 12px;
+            padding-bottom: 30px;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 24px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        
+        .card h2 {
+            margin-bottom: 15px;
+            color: #1a1a2e;
+            font-size: 18px;
+            border-left: 4px solid #FFD700;
+            padding-left: 12px;
+        }
+        
+        .form-group {
+            margin-bottom: 14px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            color: #333;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 14px 12px;
+            border: 1px solid #ddd;
+            border-radius: 14px;
+            font-size: 16px;
+            background: white;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #FFD700;
+            box-shadow: 0 0 0 2px rgba(255,215,0,0.2);
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+            min-width: 120px;
+        }
+        
+        .btn {
+            padding: 14px 20px;
+            border: none;
+            border-radius: 40px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s, transform 0.05s;
+            text-align: center;
+            display: inline-block;
+        }
+        
+        .btn:active {
+            transform: scale(0.97);
+        }
+        
+        .btn-primary {
+            background: #1a1a2e;
+            color: #FFD700;
+        }
+        
+        .btn-success {
+            background: #4caf50;
+            color: white;
+        }
+        
+        .btn-danger {
+            background: #ff4444;
+            color: white;
+        }
+        
+        .btn-warning {
+            background: #ff9800;
+            color: white;
+        }
+        
+        .btn-sm {
+            padding: 8px 14px;
+            font-size: 14px;
+        }
+        
+        .btn-block {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        
+        .products-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        
+        .products-table th,
+        .products-table td {
+            padding: 12px 8px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .products-table th {
+            background: #f5f5f5;
+            font-weight: 600;
+            font-size: 13px;
+        }
+        
+        .product-photo {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 12px;
+            background: #f0f0f0;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .tab-btn {
+            flex: 1;
+            min-width: 80px;
+            padding: 12px 8px;
+            background: #e0e0e0;
+            border: none;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        
+        .tab-btn.active {
+            background: #1a1a2e;
+            color: #FFD700;
+        }
+        
+        .tab-pane {
+            display: none;
+        }
+        
+        .tab-pane.active {
+            display: block;
+        }
+        
+        .sizes-list, .genders-list, .subcategories-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .size-tag, .gender-tag, .subcategory-tag {
+            background: #e0e0e0;
+            padding: 6px 12px;
+            border-radius: 30px;
+            font-size: 13px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .size-tag button, .gender-tag button, .subcategory-tag button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #ff4444;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        
+        .add-size, .add-gender, .add-subcategory {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .add-size input, .add-gender input, .add-subcategory input {
+            flex: 1;
+            padding: 12px;
+            border-radius: 30px;
+            border: 1px solid #ddd;
+            font-size: 14px;
+        }
+        
+        .add-size button, .add-gender button, .add-subcategory button {
+            padding: 12px 20px;
+            background: #1a1a2e;
+            color: #FFD700;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .categories-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .category-tag {
+            background: #e0e0e0;
+            padding: 8px 16px;
+            border-radius: 40px;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .category-tag button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #ff4444;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .add-category {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .add-category input {
+            flex: 1;
+            padding: 14px;
+            border-radius: 40px;
+            border: 1px solid #ddd;
+            font-size: 14px;
+        }
+        
+        .add-category button {
+            padding: 14px 20px;
+        }
+        
+        .search-box {
+            margin-bottom: 15px;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 14px;
+            border-radius: 40px;
+            border: 1px solid #ddd;
+            font-size: 16px;
+        }
+        
+        hr {
+            margin: 20px 0;
+            border: none;
+            border-top: 1px solid #eee;
+        }
+        
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 28px;
+            max-width: 450px;
+            width: 100%;
+            margin: auto;
+            padding: 20px;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .modal-header h3 {
+            font-size: 18px;
+            color: #1a1a2e;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: #888;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .button-group .btn {
+            flex: 1;
+        }
+        
+        .price-edit-group {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 12px;
+            padding: 10px;
+            background: #f9f9f9;
+            border-radius: 14px;
+        }
+        
+        .price-edit-group label {
+            font-size: 14px;
+            font-weight: 600;
+            flex: 1;
+        }
+        
+        .price-edit-input {
+            width: 120px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            text-align: right;
+            font-size: 14px;
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding: 8px;
+            }
+            .card {
+                padding: 14px;
+            }
+            .btn {
+                padding: 12px 16px;
+                font-size: 14px;
+            }
+            .products-table th,
+            .products-table td {
+                padding: 8px 4px;
+                font-size: 12px;
+            }
+            .product-photo {
+                width: 40px;
+                height: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div id="loginCard" class="card">
+        <h2>🔐 Вход в админ-панель</h2>
+        <div class="form-group">
+            <label>Пароль</label>
+            <input type="password" id="adminPassword" placeholder="Введите пароль">
+        </div>
+        <button class="btn btn-primary btn-block" onclick="checkLogin()">Войти</button>
+    </div>
+    
+    <div id="adminPanel" style="display: none;">
+        <div class="card">
+            <h2>👗 Nova Fashion - Управление магазином</h2>
+            
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="products">📋 Товары</button>
+                <button class="tab-btn" data-tab="add">➕ Добавить</button>
+                <button class="tab-btn" data-tab="categories">🏷️ Категории</button>
+                <button class="tab-btn" data-tab="subcategories">📂 Подкатегории</button>
+                <button class="tab-btn" data-tab="settings">⚙️ Настройки</button>
+            </div>
+            
+            <!-- Товары -->
+            <div id="tabProducts" class="tab-pane active">
+                <div class="search-box">
+                    <input type="text" id="searchProduct" placeholder="🔍 Поиск товаров..." onkeyup="filterProducts()">
+                </div>
+                <div id="productsList"></div>
+            </div>
+            
+            <!-- Добавить товар -->
+            <div id="tabAdd" class="tab-pane">
+                <form id="productForm">
+                    <div class="form-group">
+                        <label>Название товара *</label>
+                        <input type="text" id="productName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Описание</label>
+                        <textarea id="productDesc" rows="3"></textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Категория</label>
+                            <select id="productCategory" onchange="updateSubcategorySelect()"></select>
+                        </div>
+                        <div class="form-group">
+                            <label>Подкатегория</label>
+                            <select id="productSubcategory"></select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Для кого (можно выбрать несколько)</label>
+                        <div id="gendersList" class="genders-list"></div>
+                        <div class="add-gender">
+                            <input type="text" id="newGender" placeholder="boy, girl, man, woman, all">
+                            <button type="button" onclick="addGender()">➕ Добавить</button>
+                        </div>
+                        <small style="color:#888;">Варианты: boy, girl, man, woman, all</small>
+                    </div>
+                    <div class="form-group">
+                        <label>Цена (₽)</label>
+                        <input type="number" id="productPrice" placeholder="1990" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Фото (ссылка)</label>
+                        <input type="text" id="productPhoto" placeholder="https://...">
+                        <small>Загрузите на postimages.org → вставьте прямую ссылку</small>
+                    </div>
+                    <div class="form-group">
+                        <label>Размеры</label>
+                        <div id="sizesList" class="sizes-list"></div>
+                        <div class="add-size">
+                            <input type="text" id="newSize" placeholder="Например: M, 42, XL">
+                            <button type="button" onclick="addSize()">➕ Добавить размер</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Акция</label>
+                        <select id="productSale">
+                            <option value="false">Нет</option>
+                            <option value="true">🔥 Акция</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-success btn-block">💾 Сохранить товар</button>
+                </form>
+            </div>
+            
+            <!-- Категории -->
+            <div id="tabCategories" class="tab-pane">
+                <h3>📂 Управление категориями</h3>
+                <div class="categories-list" id="categoriesList"></div>
+                <div class="add-category">
+                    <input type="text" id="newCategory" placeholder="Название новой категории">
+                    <button class="btn btn-primary" onclick="addCategory()">➕ Добавить</button>
+                </div>
+                <hr>
+                <div class="form-group">
+                    <label>При удалении категории:</label>
+                    <select id="deleteCategoryAction">
+                        <option value="delete">Удалить товары в ней</option>
+                        <option value="move">Переместить в "Другое"</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Подкатегории -->
+            <div id="tabSubcategories" class="tab-pane">
+                <h3>📂 Управление подкатегориями</h3>
+                <div class="form-group">
+                    <label>Выберите категорию</label>
+                    <select id="subcategoryCategorySelect" onchange="loadSubcategoriesForEdit()"></select>
+                </div>
+                <div id="subcategoriesList" class="subcategories-list"></div>
+                <div class="add-subcategory">
+                    <input type="text" id="newSubcategory" placeholder="Название подкатегории">
+                    <button class="btn btn-primary" onclick="addSubcategory()">➕ Добавить</button>
+                </div>
+            </div>
+            
+            <!-- Настройки -->
+            <div id="tabSettings" class="tab-pane">
+                <div class="form-group">
+                    <label>🔑 GitHub токен</label>
+                    <input type="password" id="githubToken" placeholder="ghp_...">
+                    <button class="btn btn-primary btn-sm" onclick="saveGithubToken()" style="margin-top: 8px;">💾 Сохранить токен</button>
+                </div>
+                <hr>
+                <div class="form-group">
+                    <label>📞 Телефон магазина</label>
+                    <input type="text" id="shopPhone" placeholder="+7 (999) 123-45-67">
+                </div>
+                <div class="form-group">
+                    <label>🆔 Telegram ID менеджера</label>
+                    <input type="text" id="managerId" placeholder="5404907427">
+                </div>
+                <button class="btn btn-primary btn-block" onclick="saveSettings()">💾 Сохранить настройки</button>
+                <hr>
+                <button class="btn btn-success btn-block" onclick="saveToGitHub()">💾 Сохранить на сервер</button>
+                <button class="btn btn-warning btn-block" onclick="exportAllData()" style="margin-top: 10px;">📤 Экспортировать data.json</button>
+            </div>
+        </div>
+        
+        <!-- Модальное окно редактирования цены -->
+        <div id="priceModal" class="modal-overlay">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="priceModalTitle">💰 Редактирование цены</h3>
+                    <button class="close-modal" onclick="closePriceModal()">×</button>
+                </div>
+                <div id="priceModalBody"></div>
+                <div class="button-group">
+                    <button class="btn btn-success" onclick="savePriceChanges()">💾 Сохранить</button>
+                    <button class="btn btn-warning" onclick="closePriceModal()">Отмена</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ============ ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ============
+    let products = [];
+    let categories = ["Одежда", "Обувь", "Аксессуары"];
+    let subcategories = {};
+    let shopConfig = { contactPhone: "", managerTgId: "", botToken: "" };
+    let currentSizes = [];
+    let currentGenders = [];
+    let editingProductId = null;
+    let tempPrice = 0;
+    
+    let githubConfig = { repo: "", token: null };
+    
+    const defaultSubcategories = {
+        "Одежда": ["Джинсы", "Брюки", "Футболки", "Рубашки", "Свитеры", "Куртки", "Платья", "Юбки", "Шорты"],
+        "Обувь": ["Кеды и кроссовки", "Шлепанцы", "Тапочки", "Ботинки", "Сапоги", "Туфли"],
+        "Аксессуары": ["Бижутерия", "Брелоки", "Головные уборы", "Перчатки", "Варежки", "Солнцезащитные очки", "Сумки", "Шарфы", "Ремни", "Кошельки"]
+    };
+    
+    const genderOptions = [
+        { id: 'all', name: '👥 Все' },
+        { id: 'boy', name: '👦 Мальчик' },
+        { id: 'girl', name: '👧 Девочка' },
+        { id: 'man', name: '👨 Мужчина' },
+        { id: 'woman', name: '👩 Женщина' }
+    ];
+    
+    // ============ ВСПОМОГАТЕЛЬНЫЕ ============
+    function getRepoInfo() {
+        const hostname = window.location.hostname;
+        if (hostname.includes('github.io')) {
+            const username = hostname.split('.')[0];
+            const pathParts = window.location.pathname.split('/');
+            const reponame = pathParts[1] || '';
+            return { username, reponame };
+        }
+        return null;
     }
-  ]
-}
+    
+    function switchToAddTab() {
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
+        const addTabBtn = document.querySelector('.tab-btn[data-tab="add"]');
+        if (addTabBtn) addTabBtn.classList.add('active');
+        document.getElementById('tabAdd').classList.add('active');
+        document.getElementById('productForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    
+    function clearProductForm() {
+        document.getElementById('productName').value = '';
+        document.getElementById('productDesc').value = '';
+        document.getElementById('productPhoto').value = '';
+        document.getElementById('productPrice').value = '';
+        document.getElementById('productCategory').value = categories[0] || 'Одежда';
+        document.getElementById('productSale').value = 'false';
+        currentSizes = [];
+        currentGenders = [];
+        renderSizesList();
+        renderGendersList();
+        updateSubcategorySelect();
+        editingProductId = null;
+    }
+    
+    function updateSubcategorySelect() {
+        const category = document.getElementById('productCategory').value;
+        const subcatSelect = document.getElementById('productSubcategory');
+        const subs = subcategories[category] || [];
+        subcatSelect.innerHTML = '<option value="">Выберите подкатегорию</option>' + subs.map(s => `<option value="${s}">${s}</option>`).join('');
+    }
+    
+    function loadSubcategoriesForEdit() {
+        const category = document.getElementById('subcategoryCategorySelect').value;
+        const subs = subcategories[category] || [];
+        const container = document.getElementById('subcategoriesList');
+        if (!subs.length) {
+            container.innerHTML = '<small>Нет подкатегорий</small>';
+            return;
+        }
+        container.innerHTML = subs.map((s, i) => `<span class="subcategory-tag">${escapeHtml(s)}<button onclick="deleteSubcategory('${category}', '${s}', ${i})">×</button></span>`).join('');
+    }
+    
+    function addSubcategory() {
+        const category = document.getElementById('subcategoryCategorySelect').value;
+        if (!category) { alert('Сначала выберите категорию'); return; }
+        const newSub = document.getElementById('newSubcategory').value.trim();
+        if (!newSub) { alert('Введите название подкатегории'); return; }
+        if (!subcategories[category]) subcategories[category] = [];
+        if (subcategories[category].includes(newSub)) { alert('Такая подкатегория уже есть'); return; }
+        subcategories[category].push(newSub);
+        loadSubcategoriesForEdit();
+        updateSubcategorySelect();
+        document.getElementById('newSubcategory').value = '';
+        alert(`✅ Подкатегория "${newSub}" добавлена`);
+    }
+    
+    function deleteSubcategory(category, subcategory, index) {
+        if (confirm(`Удалить подкатегорию "${subcategory}"?`)) {
+            subcategories[category].splice(index, 1);
+            loadSubcategoriesForEdit();
+            updateSubcategorySelect();
+            alert('✅ Подкатегория удалена');
+        }
+    }
+    
+    // ============ ВХОД ============
+    function checkLogin() {
+        const password = document.getElementById('adminPassword').value;
+        if (password === 'Amigo2025') {
+            document.getElementById('loginCard').style.display = 'none';
+            document.getElementById('adminPanel').style.display = 'block';
+            loadData();
+            setupTabs();
+            setupSubcategorySelect();
+        } else {
+            alert('❌ Неверный пароль!');
+        }
+    }
+    
+    function setupSubcategorySelect() {
+        const select = document.getElementById('subcategoryCategorySelect');
+        select.innerHTML = categories.map(c => `<option value="${c}">${c}</option>`).join('');
+        select.onchange = () => loadSubcategoriesForEdit();
+        if (categories.length) loadSubcategoriesForEdit();
+    }
+    
+    // ============ ЗАГРУЗКА ДАННЫХ ============
+    async function loadData() {
+        try {
+            const response = await fetch('./data.json?' + Date.now());
+            if (response.ok) {
+                const data = await response.json();
+                products = data.products || [];
+                if (data.categories && data.categories.length) categories = data.categories;
+                subcategories = data.subcategories || defaultSubcategories;
+                shopConfig = {
+                    contactPhone: data.contactPhone || '+7 (968) 890-07-44',
+                    managerTgId: data.managerTgId || '5404907427',
+                    botToken: data.botToken || ''
+                };
+            } else {
+                subcategories = defaultSubcategories;
+            }
+        } catch(e) { 
+            console.log('Новый файл data.json');
+            subcategories = defaultSubcategories;
+        }
+        
+        const savedToken = localStorage.getItem('nova_github_token');
+        if (savedToken) {
+            githubConfig.token = savedToken;
+            document.getElementById('githubToken').value = savedToken;
+        }
+        const repoInfo = getRepoInfo();
+        if (repoInfo && repoInfo.reponame) githubConfig.repo = `${repoInfo.username}/${repoInfo.reponame}`;
+        
+        document.getElementById('shopPhone').value = shopConfig.contactPhone;
+        document.getElementById('managerId').value = shopConfig.managerTgId;
+        
+        updateCategorySelect();
+        setupSubcategorySelect();
+        renderProductsList();
+        renderCategoriesList();
+    }
+    
+    function updateCategorySelect() {
+        const select = document.getElementById('productCategory');
+        if (select) select.innerHTML = categories.map(c => `<option value="${c}">${c}</option>`).join('');
+        updateSubcategorySelect();
+    }
+    
+    function renderCategoriesList() {
+        const container = document.getElementById('categoriesList');
+        if (!container) return;
+        if (!categories.length) {
+            container.innerHTML = '<small>Нет категорий. Добавьте первую!</small>';
+            return;
+        }
+        container.innerHTML = categories.map((c, i) => `<span class="category-tag">${escapeHtml(c)}<button onclick="deleteCategory('${c}', ${i})">×</button></span>`).join('');
+    }
+    
+    function addCategory() {
+        const input = document.getElementById('newCategory');
+        const newCat = input.value.trim();
+        if (!newCat) { alert('Введите название категории'); return; }
+        if (categories.includes(newCat)) { alert('Такая категория уже существует'); return; }
+        categories.push(newCat);
+        subcategories[newCat] = [];
+        updateCategorySelect();
+        renderCategoriesList();
+        setupSubcategorySelect();
+        input.value = '';
+        alert(`✅ Категория "${newCat}" добавлена!`);
+    }
+    
+    function deleteCategory(category, index) {
+        const productsIn = products.filter(p => p.category === category);
+        if (productsIn.length > 0) {
+            const action = document.getElementById('deleteCategoryAction').value;
+            if (action === 'delete') {
+                if (!confirm(`В категории "${category}" есть ${productsIn.length} товаров. Удалить их все?`)) return;
+                products = products.filter(p => p.category !== category);
+            } else {
+                const defaultCat = categories[0] || 'Другое';
+                if (!confirm(`Переместить ${productsIn.length} товаров из "${category}" в "${defaultCat}"?`)) return;
+                products = products.map(p => p.category === category ? { ...p, category: defaultCat } : p);
+            }
+        }
+        categories.splice(index, 1);
+        delete subcategories[category];
+        updateCategorySelect();
+        renderCategoriesList();
+        setupSubcategorySelect();
+        renderProductsList();
+        alert(`✅ Категория "${category}" удалена`);
+    }
+    
+    // ============ ОТОБРАЖЕНИЕ ТОВАРОВ ============
+    function renderProductsList() {
+        const searchTerm = document.getElementById('searchProduct')?.value.toLowerCase() || '';
+        let filtered = products;
+        if (searchTerm) filtered = products.filter(p => p.name.toLowerCase().includes(searchTerm));
+        
+        const container = document.getElementById('productsList');
+        if (!filtered.length) {
+            container.innerHTML = '<div style="text-align:center;padding:40px;">📦 Нет товаров</div>';
+            return;
+        }
+        
+        let html = `<div style="overflow-x: auto;"><table class="products-table">
+            <thead><tr><th>Фото</th><th>Название</th><th>Категория</th><th>Подкатегория</th><th>Для кого</th><th>Цена</th><th></th></tr></thead>
+            <tbody>`;
+        filtered.forEach(p => {
+            const genderDisplay = Array.isArray(p.gender) ? p.gender.map(g => {
+                if (g === 'boy') return '👦';
+                if (g === 'girl') return '👧';
+                if (g === 'man') return '👨';
+                if (g === 'woman') return '👩';
+                return '👥';
+            }).join(' ') : '👥';
+            
+            html += `<tr>
+                <td><img src="${p.photo || 'https://placehold.co/50x50/eee/ccc?text=No'}" class="product-photo" onerror="this.src='https://placehold.co/50x50/eee/ccc?text=No'"></td>
+                <td><strong>${escapeHtml(p.name)}</strong><br><small>${(p.description || '').substring(0, 35)}</small></td>
+                <td>${p.category || '-'}</td>
+                <td>${p.subcategory || '-'}</td>
+                <td>${genderDisplay}</td>
+                <td>${p.price}₽</td>
+                <td>
+                    <button class="btn btn-warning btn-sm" onclick="editPrice(${p.id})" style="margin:2px;">💰</button>
+                    <button class="btn btn-warning btn-sm" onclick="editProduct(${p.id})" style="margin:2px;">✏️</button>
+                    <button class="btn btn-danger btn-sm" onclick="deleteProduct(${p.id})" style="margin:2px;">🗑️</button>
+                </td>
+            </tr>`;
+        });
+        html += `</tbody></table></div>`;
+        container.innerHTML = html;
+    }
+    
+    function filterProducts() { renderProductsList(); }
+    
+    // ============ РЕДАКТИРОВАНИЕ ЦЕНЫ ============
+    function editPrice(productId) {
+        const product = products.find(p => p.id === productId);
+        if (!product) return;
+        editingProductId = productId;
+        tempPrice = product.price;
+        
+        document.getElementById('priceModalTitle').innerHTML = `💰 Цена: ${escapeHtml(product.name)}`;
+        document.getElementById('priceModalBody').innerHTML = `
+            <div class="price-edit-group">
+                <label>💰 Цена (₽):</label>
+                <input type="number" id="editPrice" value="${tempPrice}" class="price-edit-input" onchange="tempPrice = this.value">
+            </div>
+        `;
+        document.getElementById('priceModal').style.display = 'flex';
+    }
+    
+    function savePriceChanges() {
+        if (editingProductId) {
+            const newPrice = parseInt(document.getElementById('editPrice')?.value) || 0;
+            const index = products.findIndex(p => p.id === editingProductId);
+            if (index !== -1) {
+                products[index].price = newPrice;
+                alert('✅ Цена обновлена! Не забудьте сохранить на сервер.');
+                renderProductsList();
+            }
+        }
+        closePriceModal();
+    }
+    
+    function closePriceModal() {
+        document.getElementById('priceModal').style.display = 'none';
+        editingProductId = null;
+    }
+    
+    // ============ УПРАВЛЕНИЕ РАЗМЕРАМИ ============
+    function addSize() {
+        const input = document.getElementById('newSize');
+        const val = input.value.trim().toUpperCase();
+        if (val && !currentSizes.includes(val)) {
+            currentSizes.push(val);
+            renderSizesList();
+            input.value = '';
+        }
+    }
+    
+    function removeSize(idx) {
+        currentSizes.splice(idx, 1);
+        renderSizesList();
+    }
+    
+    function renderSizesList() {
+        const container = document.getElementById('sizesList');
+        if (!container) return;
+        if (!currentSizes.length) {
+            container.innerHTML = '<small>Нет размеров. Добавьте размеры</small>';
+            return;
+        }
+        container.innerHTML = currentSizes.map((s, i) => `<span class="size-tag">${escapeHtml(s)}<button onclick="removeSize(${i})">×</button></span>`).join('');
+    }
+    
+    // ============ УПРАВЛЕНИЕ ГЕНДЕРАМИ ============
+    function addGender() {
+        const input = document.getElementById('newGender');
+        const val = input.value.trim().toLowerCase();
+        const validGenders = ['boy', 'girl', 'man', 'woman', 'all'];
+        if (val && validGenders.includes(val) && !currentGenders.includes(val)) {
+            currentGenders.push(val);
+            renderGendersList();
+            input.value = '';
+        } else if (val && !validGenders.includes(val)) {
+            alert('Недопустимое значение. Используйте: boy, girl, man, woman, all');
+        }
+    }
+    
+    function removeGender(idx) {
+        currentGenders.splice(idx, 1);
+        renderGendersList();
+    }
+    
+    function renderGendersList() {
+        const container = document.getElementById('gendersList');
+        if (!container) return;
+        if (!currentGenders.length) {
+            container.innerHTML = '<small>Не выбрано. Добавьте получателей</small>';
+            return;
+        }
+        const genderNames = {
+            'boy': '👦 Мальчик', 'girl': '👧 Девочка', 'man': '👨 Мужчина', 'woman': '👩 Женщина', 'all': '👥 Все'
+        };
+        container.innerHTML = currentGenders.map((g, i) => `<span class="gender-tag">${genderNames[g] || g}<button onclick="removeGender(${i})">×</button></span>`).join('');
+    }
+    
+    // ============ СОХРАНЕНИЕ ТОВАРА ============
+    document.getElementById('productForm')?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        const newId = products.length ? Math.max(...products.map(p => p.id)) + 1 : 1;
+        
+        const newProduct = {
+            id: newId,
+            name: document.getElementById('productName').value,
+            description: document.getElementById('productDesc').value,
+            category: document.getElementById('productCategory').value,
+            subcategory: document.getElementById('productSubcategory').value || null,
+            gender: currentGenders.length ? currentGenders : ['all'],
+            price: parseInt(document.getElementById('productPrice').value) || 0,
+            sizes: currentSizes.length ? currentSizes : null,
+            sale: document.getElementById('productSale').value === 'true',
+            photo: document.getElementById('productPhoto').value || '',
+            popular: false
+        };
+        
+        products.push(newProduct);
+        clearProductForm();
+        renderProductsList();
+        alert(`✅ Товар "${newProduct.name}" сохранен!`);
+    });
+    
+    // ============ РЕДАКТИРОВАНИЕ ТОВАРА ============
+    function editProduct(id) {
+        const product = products.find(p => p.id === id);
+        if (!product) return;
+        
+        const index = products.findIndex(p => p.id === id);
+        if (index !== -1) products.splice(index, 1);
+        
+        document.getElementById('productName').value = product.name;
+        document.getElementById('productDesc').value = product.description || '';
+        document.getElementById('productCategory').value = product.category || categories[0];
+        document.getElementById('productPrice').value = product.price || 0;
+        document.getElementById('productPhoto').value = product.photo || '';
+        document.getElementById('productSale').value = product.sale ? 'true' : 'false';
+        
+        currentSizes = product.sizes ? [...product.sizes] : [];
+        currentGenders = product.gender ? [...product.gender] : ['all'];
+        renderSizesList();
+        renderGendersList();
+        updateSubcategorySelect();
+        
+        if (product.subcategory) {
+            setTimeout(() => {
+                document.getElementById('productSubcategory').value = product.subcategory;
+            }, 50);
+        }
+        
+        switchToAddTab();
+        alert(`✏️ Редактирование: "${product.name}". После изменений нажмите "Сохранить товар"`);
+    }
+    
+    // ============ УДАЛЕНИЕ ТОВАРА ============
+    function deleteProduct(id) {
+        const product = products.find(p => p.id === id);
+        if (confirm(`Удалить товар "${product?.name}"?`)) {
+            const idx = products.findIndex(p => p.id === id);
+            if (idx !== -1) products.splice(idx, 1);
+            renderProductsList();
+            alert('✅ Товар удален');
+        }
+    }
+    
+    // ============ СОХРАНЕНИЕ НА GITHUB ============
+    async function saveToGitHub() {
+        const token = document.getElementById('githubToken').value;
+        if (!token || !token.startsWith('ghp_')) {
+            alert('❌ Введите корректный GitHub токен (начинается с ghp_)');
+            return;
+        }
+        if (!githubConfig.repo) {
+            alert('❌ Не удалось определить репозиторий');
+            return;
+        }
+        
+        localStorage.setItem('nova_github_token', token);
+        
+        const data = {
+            shopName: 'Nova Fashion',
+            contactPhone: document.getElementById('shopPhone').value,
+            managerTgId: document.getElementById('managerId').value,
+            botToken: shopConfig.botToken || '',
+            categories: categories,
+            subcategories: subcategories,
+            products: products
+        };
+        
+        const url = `https://api.github.com/repos/${githubConfig.repo}/contents/data.json`;
+        
+        try {
+            const getRes = await fetch(url, {
+                headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github+json' }
+            });
+            let sha = null;
+            if (getRes.ok) {
+                const fd = await getRes.json();
+                sha = fd.sha;
+            }
+            
+            const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
+            const putRes = await fetch(url, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Accept': 'application/vnd.github+json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    message: `Обновление данных от ${new Date().toLocaleString('ru-RU')}`,
+                    content: content,
+                    sha: sha
+                })
+            });
+            
+            if (putRes.ok) {
+                alert('✅ Данные успешно сохранены! Через 2 минуты изменения появятся');
+            } else {
+                const error = await putRes.json();
+                alert(`❌ Ошибка: ${error.message}`);
+            }
+        } catch(e) {
+            console.error(e);
+            alert('⚠️ Ошибка соединения');
+        }
+    }
+    
+    // ============ ЭКСПОРТ ============
+    function exportAllData() {
+        const data = {
+            shopName: 'Nova Fashion',
+            contactPhone: document.getElementById('shopPhone').value,
+            managerTgId: document.getElementById('managerId').value,
+            botToken: shopConfig.botToken || '',
+            categories: categories,
+            subcategories: subcategories,
+            products: products
+        };
+        const jsonStr = JSON.stringify(data, null, 2);
+        const blob = new Blob([jsonStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'data.json';
+        a.click();
+        URL.revokeObjectURL(url);
+        alert('✅ Файл data.json скачан! Загрузите его в репозиторий.');
+    }
+    
+    // ============ НАСТРОЙКИ ============
+    function saveGithubToken() {
+        const token = document.getElementById('githubToken').value;
+        if (token && token.startsWith('ghp_')) {
+            localStorage.setItem('nova_github_token', token);
+            githubConfig.token = token;
+            alert('✅ Токен сохранен!');
+        } else {
+            alert('❌ Неверный формат токена. Токен должен начинаться с "ghp_"');
+        }
+    }
+    
+    function saveSettings() {
+        alert('✅ Настройки сохранены локально! Нажмите "Сохранить на сервер" для применения.');
+    }
+    
+    // ============ ВКЛАДКИ ============
+    function setupTabs() {
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tab = btn.dataset.tab;
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+                if (tab === 'products') document.getElementById('tabProducts').classList.add('active');
+                if (tab === 'add') document.getElementById('tabAdd').classList.add('active');
+                if (tab === 'categories') document.getElementById('tabCategories').classList.add('active');
+                if (tab === 'subcategories') document.getElementById('tabSubcategories').classList.add('active');
+                if (tab === 'settings') document.getElementById('tabSettings').classList.add('active');
+            });
+        });
+    }
+    
+    function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+</script>
+</body>
+</html>
