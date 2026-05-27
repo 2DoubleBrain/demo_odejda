@@ -190,15 +190,15 @@
             display: block;
         }
         
-        .sizes-list, .genders-list, .subcategories-list {
+        .sizes-list, .genders-checkbox-list, .subcategories-list {
             display: flex;
             flex-wrap: wrap;
-            gap: 8px;
+            gap: 12px;
             margin-top: 10px;
             margin-bottom: 10px;
         }
         
-        .size-tag, .gender-tag, .subcategory-tag {
+        .size-tag, .subcategory-tag {
             background: #e0e0e0;
             padding: 6px 12px;
             border-radius: 30px;
@@ -208,7 +208,7 @@
             gap: 8px;
         }
         
-        .size-tag button, .gender-tag button, .subcategory-tag button {
+        .size-tag button, .subcategory-tag button {
             background: none;
             border: none;
             cursor: pointer;
@@ -217,14 +217,34 @@
             font-weight: bold;
         }
         
-        .add-size, .add-gender, .add-subcategory {
+        .gender-checkbox {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #f0f0f0;
+            padding: 10px 16px;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .gender-checkbox.selected {
+            background: #1a1a2e;
+            color: #FFD700;
+        }
+        
+        .gender-checkbox input {
+            display: none;
+        }
+        
+        .add-size, .add-subcategory {
             display: flex;
             gap: 8px;
             margin-top: 10px;
             flex-wrap: wrap;
         }
         
-        .add-size input, .add-gender input, .add-subcategory input {
+        .add-size input, .add-subcategory input {
             flex: 1;
             padding: 12px;
             border-radius: 30px;
@@ -232,7 +252,7 @@
             font-size: 14px;
         }
         
-        .add-size button, .add-gender button, .add-subcategory button {
+        .add-size button, .add-subcategory button {
             padding: 12px 20px;
             background: #1a1a2e;
             color: #FFD700;
@@ -465,12 +485,8 @@
                     </div>
                     <div class="form-group">
                         <label>Для кого (можно выбрать несколько)</label>
-                        <div id="gendersList" class="genders-list"></div>
-                        <div class="add-gender">
-                            <input type="text" id="newGender" placeholder="boy, girl, man, woman, all">
-                            <button type="button" onclick="addGender()">➕ Добавить</button>
-                        </div>
-                        <small style="color:#888;">Варианты: boy, girl, man, woman, all</small>
+                        <div id="gendersCheckboxList" class="genders-checkbox-list"></div>
+                        <small style="color:#888;">Выберите для кого предназначен товар</small>
                     </div>
                     <div class="form-group">
                         <label>Цена (₽)</label>
@@ -530,12 +546,15 @@
                     <input type="text" id="newSubcategory" placeholder="Название подкатегории">
                     <button class="btn btn-primary" onclick="addSubcategory()">➕ Добавить</button>
                 </div>
+                <p style="font-size: 12px; color: #888; margin-top: 10px;">
+                    ⚠️ При удалении подкатегории все товары из нее будут перемещены в основную категорию
+                </p>
             </div>
             
             <!-- Настройки -->
             <div id="tabSettings" class="tab-pane">
                 <div class="form-group">
-                    <label>🔑 GitHub токен</label>
+                    <label>🔑 токен</label>
                     <input type="password" id="githubToken" placeholder="ghp_...">
                     <button class="btn btn-primary btn-sm" onclick="saveGithubToken()" style="margin-top: 8px;">💾 Сохранить токен</button>
                 </div>
@@ -585,19 +604,27 @@
     
     let githubConfig = { repo: "", token: null };
     
-    const defaultSubcategories = {
-        "Одежда": ["Джинсы", "Брюки", "Футболки", "Рубашки", "Свитеры", "Куртки", "Платья", "Юбки", "Шорты"],
-        "Обувь": ["Кеды и кроссовки", "Шлепанцы", "Тапочки", "Ботинки", "Сапоги", "Туфли"],
-        "Аксессуары": ["Бижутерия", "Брелоки", "Головные уборы", "Перчатки", "Варежки", "Солнцезащитные очки", "Сумки", "Шарфы", "Ремни", "Кошельки"]
-    };
-    
     const genderOptions = [
-        { id: 'all', name: '👥 Все' },
         { id: 'boy', name: '👦 Мальчик' },
         { id: 'girl', name: '👧 Девочка' },
         { id: 'man', name: '👨 Мужчина' },
         { id: 'woman', name: '👩 Женщина' }
     ];
+    
+    const defaultSubcategories = {
+        "Одежда": {
+            emoji: "👕",
+            items: ["Джинсы", "Брюки", "Футболки", "Рубашки", "Свитеры", "Куртки", "Платья", "Юбки", "Шорты"]
+        },
+        "Обувь": {
+            emoji: "👟",
+            items: ["Кеды и кроссовки", "Шлепанцы", "Тапочки", "Ботинки", "Сапоги", "Туфли"]
+        },
+        "Аксессуары": {
+            emoji: "🧢",
+            items: ["Бижутерия", "Брелоки", "Головные уборы", "Перчатки", "Варежки", "Солнцезащитные очки", "Сумки", "Шарфы", "Ремни", "Кошельки"]
+        }
+    };
     
     // ============ ВСПОМОГАТЕЛЬНЫЕ ============
     function getRepoInfo() {
@@ -630,7 +657,7 @@
         currentSizes = [];
         currentGenders = [];
         renderSizesList();
-        renderGendersList();
+        renderGendersCheckbox();
         updateSubcategorySelect();
         editingProductId = null;
     }
@@ -638,13 +665,15 @@
     function updateSubcategorySelect() {
         const category = document.getElementById('productCategory').value;
         const subcatSelect = document.getElementById('productSubcategory');
-        const subs = subcategories[category] || [];
+        const catData = subcategories[category];
+        const subs = catData ? catData.items : [];
         subcatSelect.innerHTML = '<option value="">Выберите подкатегорию</option>' + subs.map(s => `<option value="${s}">${s}</option>`).join('');
     }
     
     function loadSubcategoriesForEdit() {
         const category = document.getElementById('subcategoryCategorySelect').value;
-        const subs = subcategories[category] || [];
+        const catData = subcategories[category];
+        const subs = catData ? catData.items : [];
         const container = document.getElementById('subcategoriesList');
         if (!subs.length) {
             container.innerHTML = '<small>Нет подкатегорий</small>';
@@ -658,9 +687,11 @@
         if (!category) { alert('Сначала выберите категорию'); return; }
         const newSub = document.getElementById('newSubcategory').value.trim();
         if (!newSub) { alert('Введите название подкатегории'); return; }
-        if (!subcategories[category]) subcategories[category] = [];
-        if (subcategories[category].includes(newSub)) { alert('Такая подкатегория уже есть'); return; }
-        subcategories[category].push(newSub);
+        if (!subcategories[category]) {
+            subcategories[category] = { emoji: "📦", items: [] };
+        }
+        if (subcategories[category].items.includes(newSub)) { alert('Такая подкатегория уже есть'); return; }
+        subcategories[category].items.push(newSub);
         loadSubcategoriesForEdit();
         updateSubcategorySelect();
         document.getElementById('newSubcategory').value = '';
@@ -668,11 +699,19 @@
     }
     
     function deleteSubcategory(category, subcategory, index) {
-        if (confirm(`Удалить подкатегорию "${subcategory}"?`)) {
-            subcategories[category].splice(index, 1);
+        if (confirm(`Удалить подкатегорию "${subcategory}"?\n\n⚠️ Все товары из этой подкатегории будут перемещены в основную категорию "${category}".`)) {
+            // Перемещаем товары в основную категорию
+            products = products.map(p => {
+                if (p.subcategory === subcategory && p.category === category) {
+                    return { ...p, subcategory: null };
+                }
+                return p;
+            });
+            subcategories[category].items.splice(index, 1);
             loadSubcategoriesForEdit();
             updateSubcategorySelect();
-            alert('✅ Подкатегория удалена');
+            renderProductsList();
+            alert(`✅ Подкатегория "${subcategory}" удалена. Товары перемещены в "${category}".`);
         }
     }
     
@@ -758,7 +797,7 @@
         if (!newCat) { alert('Введите название категории'); return; }
         if (categories.includes(newCat)) { alert('Такая категория уже существует'); return; }
         categories.push(newCat);
-        subcategories[newCat] = [];
+        subcategories[newCat] = { emoji: "📦", items: [] };
         updateCategorySelect();
         renderCategoriesList();
         setupSubcategorySelect();
@@ -804,12 +843,12 @@
             <thead><tr><th>Фото</th><th>Название</th><th>Категория</th><th>Подкатегория</th><th>Для кого</th><th>Цена</th><th></th></tr></thead>
             <tbody>`;
         filtered.forEach(p => {
-            const genderDisplay = Array.isArray(p.gender) ? p.gender.map(g => {
+            const genderDisplay = p.gender && p.gender.length ? p.gender.map(g => {
                 if (g === 'boy') return '👦';
                 if (g === 'girl') return '👧';
                 if (g === 'man') return '👨';
                 if (g === 'woman') return '👩';
-                return '👥';
+                return '';
             }).join(' ') : '👥';
             
             html += `<tr>
@@ -893,36 +932,26 @@
         container.innerHTML = currentSizes.map((s, i) => `<span class="size-tag">${escapeHtml(s)}<button onclick="removeSize(${i})">×</button></span>`).join('');
     }
     
-    // ============ УПРАВЛЕНИЕ ГЕНДЕРАМИ ============
-    function addGender() {
-        const input = document.getElementById('newGender');
-        const val = input.value.trim().toLowerCase();
-        const validGenders = ['boy', 'girl', 'man', 'woman', 'all'];
-        if (val && validGenders.includes(val) && !currentGenders.includes(val)) {
-            currentGenders.push(val);
-            renderGendersList();
-            input.value = '';
-        } else if (val && !validGenders.includes(val)) {
-            alert('Недопустимое значение. Используйте: boy, girl, man, woman, all');
-        }
-    }
-    
-    function removeGender(idx) {
-        currentGenders.splice(idx, 1);
-        renderGendersList();
-    }
-    
-    function renderGendersList() {
-        const container = document.getElementById('gendersList');
+    // ============ УПРАВЛЕНИЕ ГЕНДЕРАМИ (ГАЛОЧКИ) ============
+    function renderGendersCheckbox() {
+        const container = document.getElementById('gendersCheckboxList');
         if (!container) return;
-        if (!currentGenders.length) {
-            container.innerHTML = '<small>Не выбрано. Добавьте получателей</small>';
-            return;
+        
+        container.innerHTML = genderOptions.map(g => `
+            <label class="gender-checkbox ${currentGenders.includes(g.id) ? 'selected' : ''}" onclick="toggleGender('${g.id}')">
+                <input type="checkbox" ${currentGenders.includes(g.id) ? 'checked' : ''}>
+                ${g.name}
+            </label>
+        `).join('');
+    }
+    
+    function toggleGender(genderId) {
+        if (currentGenders.includes(genderId)) {
+            currentGenders = currentGenders.filter(g => g !== genderId);
+        } else {
+            currentGenders.push(genderId);
         }
-        const genderNames = {
-            'boy': '👦 Мальчик', 'girl': '👧 Девочка', 'man': '👨 Мужчина', 'woman': '👩 Женщина', 'all': '👥 Все'
-        };
-        container.innerHTML = currentGenders.map((g, i) => `<span class="gender-tag">${genderNames[g] || g}<button onclick="removeGender(${i})">×</button></span>`).join('');
+        renderGendersCheckbox();
     }
     
     // ============ СОХРАНЕНИЕ ТОВАРА ============
@@ -967,9 +996,10 @@
         document.getElementById('productSale').value = product.sale ? 'true' : 'false';
         
         currentSizes = product.sizes ? [...product.sizes] : [];
-        currentGenders = product.gender ? [...product.gender] : ['all'];
+        currentGenders = product.gender ? [...product.gender] : [];
+        if (currentGenders.includes('all')) currentGenders = ['all'];
         renderSizesList();
-        renderGendersList();
+        renderGendersCheckbox();
         updateSubcategorySelect();
         
         if (product.subcategory) {
@@ -997,7 +1027,7 @@
     async function saveToGitHub() {
         const token = document.getElementById('githubToken').value;
         if (!token || !token.startsWith('ghp_')) {
-            alert('❌ Введите корректный GitHub токен (начинается с ghp_)');
+            alert('❌ Введите корректный токен (начинается с ghp_)');
             return;
         }
         if (!githubConfig.repo) {
