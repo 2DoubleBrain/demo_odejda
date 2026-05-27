@@ -8,25 +8,55 @@
     "Обувь",
     "Аксессуары"
   ],
- "products": [
-    {
-      "id": 1,
-      "name": "Футболка классическая",
-      "description": "Хлопковая футболка, дышащая ткань",
-      "category": "Одежда",
-      "price": 1990,
-      "sizes": ["XS", "S", "M", "L", "XL", "XXL"],
-      "sale": false,
-      "photo": "https://tvoe.ru/img/36ftb2s/product/754/1005/8/4670080046982-0-1.jpg",
-      "popular": true
-    },
+  "subcategories": {
+    "Одежда": [
+      "Джинсы",
+      "Брюки",
+      "Футболки",
+      "Рубашки",
+      "Свитеры",
+      "Куртки",
+      "Платья",
+      "Юбки",
+      "Шорты"
+    ],
+    "Обувь": [
+      "Кеды и кроссовки",
+      "Шлепанцы",
+      "Тапочки",
+      "Ботинки",
+      "Сапоги",
+      "Туфли"
+    ],
+    "Аксессуары": [
+      "Бижутерия",
+      "Брелоки",
+      "Головные уборы",
+      "Перчатки",
+      "Варежки",
+      "Солнцезащитные очки",
+      "Сумки",
+      "Шарфы",
+      "Ремни",
+      "Кошельки"
+    ]
+  },
+  "products": [
     {
       "id": 2,
       "name": "Кроссовки спортивные",
       "description": "Удобные кроссовки для бега",
       "category": "Обувь",
       "price": 4990,
-      "sizes": ["39", "40", "41", "42", "43", "44", "45"],
+      "sizes": [
+        "39",
+        "40",
+        "41",
+        "42",
+        "43",
+        "44",
+        "45"
+      ],
       "sale": true,
       "photo": "https://discountmsk.ru/upload/iblock/d66/z9xcqfos59weerx3ddf7pmawbegp1vb0/DSC_2890.jpg",
       "popular": true
@@ -37,7 +67,13 @@
       "description": "Теплое худи с капюшоном",
       "category": "Одежда",
       "price": 3490,
-      "sizes": ["S", "M", "L", "XL", "XXL"],
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ],
       "sale": false,
       "photo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTmG9MYgxcIbl0seUtVHT5lKoIHdr1nPe7uiw&s",
       "popular": false
@@ -51,6 +87,29 @@
       "sizes": null,
       "sale": false,
       "photo": "https://hatsandcaps.ru/components/com_jshopping/files/img_products/full_36-063-16(0).jpg",
+      "popular": false
+    },
+    {
+      "id": 5,
+      "name": "Футболка классическая",
+      "description": "Хлопковая футболка, дышащая ткань",
+      "category": "Одежда",
+      "subcategory": null,
+      "gender": [
+        "all",
+        "boy"
+      ],
+      "price": 1990,
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ],
+      "sale": false,
+      "photo": "https://tvoe.ru/img/36ftb2s/product/754/1005/8/4670080046982-0-1.jpg",
       "popular": false
     }
   ]
