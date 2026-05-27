@@ -19,7 +19,7 @@ let selectedQuantity = 1;
 // ============ КОНФИГУРАЦИЯ ============
 const genders = [
     { id: 'boy', name: 'Мальчик', icon: '👦' },
-    { id: 'girl', name:Девочка', icon: '👧' },
+    { id: 'girl', name: 'Девочка', icon: '👧' },
     { id: 'man', name: 'Мужчина', icon: '👨' },
     { id: 'woman', name: 'Женщина', icon: '👩' }
 ];
@@ -30,11 +30,6 @@ const categoryEmojis = {
     'Обувь': '👟',
     'Аксессуары': '🧢'
 };
-
-// Размеры для одежды
-const clothingSizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL'];
-// Размеры для обуви
-const shoeSizes = ['35', '36', '37', '38', '39', '40', '41', '42', '43', '44', '45', '46', '47'];
 
 // Структура подкатегорий с эмодзи
 const defaultSubcategories = {
@@ -122,7 +117,6 @@ async function loadData() {
         products = data.products || [];
         categories = data.categories || ["Одежда", "Обувь", "Аксессуары"];
         
-        // Загружаем подкатегории с эмодзи
         if (data.subcategories) {
             subcategories = data.subcategories;
         } else {
@@ -195,22 +189,18 @@ function switchPage(page) {
 function getFilteredProducts() {
     let filtered = [...products];
     
-    // Фильтр по полу (если не all)
     if (currentGender !== 'all') {
         filtered = filtered.filter(p => p.gender && p.gender.includes(currentGender));
     }
     
-    // Фильтр по категории
     if (currentCategory !== 'all') {
         filtered = filtered.filter(p => p.category === currentCategory);
     }
     
-    // Фильтр по подкатегории
     if (currentSubcategory !== 'all') {
         filtered = filtered.filter(p => p.subcategory === currentSubcategory);
     }
     
-    // Фильтр по размеру (только если выбрана не категория Аксессуары)
     if (currentSize !== 'all' && currentCategory !== 'Аксессуары') {
         filtered = filtered.filter(p => {
             if (p.sizes && p.sizes.length) {
@@ -231,7 +221,6 @@ function getAvailableSubcategories() {
 }
 
 function getAvailableSizes() {
-    // Для аксессуаров не показываем фильтр размеров
     if (currentCategory === 'Аксессуары') return [];
     
     const filtered = getFilteredProducts();
@@ -384,16 +373,12 @@ function renderProductCard(product) {
     const productJson = JSON.stringify(product).replace(/'/g, "&#39;").replace(/"/g, '&quot;');
     const rightContent = product.sale ? '<span class="sale-badge">🔥 SALE</span>' : '<span class="sale-placeholder"></span>';
     
-    // Иконки для кого
     let genderIcons = '';
     if (product.gender && product.gender.length) {
-        const genderNames = {
-            'boy': '👦', 'girl': '👧', 'man': '👨', 'woman': '👩'
-        };
+        const genderNames = { 'boy': '👦', 'girl': '👧', 'man': '👨', 'woman': '👩' };
         genderIcons = product.gender.map(g => genderNames[g] || '').join(' ');
     }
     
-    // Эмодзи категории
     const catEmoji = categoryEmojis[product.category] || '📦';
     
     return `
