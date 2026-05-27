@@ -1,115 +1,74 @@
 {
   "shopName": "Nova Fashion",
-  "contactPhone": "+7 (999) 999-99-99",
-  "managerTgId": "1043573353",
-  "botToken": "8900698937:AAFrP_Z8KlJ5i1DBuC62IDt0HTT4QX0fF4M",
-  "categories": [
-    "Одежда",
-    "Обувь",
-    "Аксессуары"
-  ],
+  "contactPhone": "+7 (968) 890-07-44",
+  "managerTgId": "5404907427",
+  "botToken": "8719723110:AAEMJuXTAh6GFXyh881z6Yk5xmIs1uliEYA",
+  "categories": ["Одежда", "Обувь", "Аксессуары"],
   "subcategories": {
-    "Одежда": [
-      "Джинсы",
-      "Брюки",
-      "Футболки",
-      "Рубашки",
-      "Свитеры",
-      "Куртки",
-      "Платья",
-      "Юбки",
-      "Шорты"
-    ],
-    "Обувь": [
-      "Кеды и кроссовки",
-      "Шлепанцы",
-      "Тапочки",
-      "Ботинки",
-      "Сапоги",
-      "Туфли"
-    ],
-    "Аксессуары": [
-      "Бижутерия",
-      "Брелоки",
-      "Головные уборы",
-      "Перчатки",
-      "Варежки",
-      "Солнцезащитные очки",
-      "Сумки",
-      "Шарфы",
-      "Ремни",
-      "Кошельки"
-    ]
+    "Одежда": {
+      "emoji": "👕",
+      "items": ["Джинсы", "Брюки", "Футболки", "Рубашки", "Свитеры", "Куртки", "Платья", "Юбки", "Шорты"]
+    },
+    "Обувь": {
+      "emoji": "👟",
+      "items": ["Кеды и кроссовки", "Шлепанцы", "Тапочки", "Ботинки", "Сапоги", "Туфли"]
+    },
+    "Аксессуары": {
+      "emoji": "🧢",
+      "items": ["Бижутерия", "Брелоки", "Головные уборы", "Перчатки", "Варежки", "Солнцезащитные очки", "Сумки", "Шарфы", "Ремни", "Кошельки"]
+    }
   },
   "products": [
     {
+      "id": 1,
+      "name": "Джинсы классические",
+      "description": "Удобные джинсы из хлопка",
+      "category": "Одежда",
+      "subcategory": "Джинсы",
+      "gender": ["man", "woman"],
+      "price": 3490,
+      "sizes": ["XS", "S", "M", "L", "XL", "XXL"],
+      "sale": false,
+      "photo": "https://placehold.co/300x200/eee/999?text=Jeans",
+      "popular": true
+    },
+    {
       "id": 2,
-      "name": "Кроссовки спортивные",
-      "description": "Удобные кроссовки для бега",
-      "category": "Обувь",
-      "price": 4990,
-      "sizes": [
-        "39",
-        "40",
-        "41",
-        "42",
-        "43",
-        "44",
-        "45"
-      ],
+      "name": "Футболка хлопковая",
+      "description": "Мягкая хлопковая футболка",
+      "category": "Одежда",
+      "subcategory": "Футболки",
+      "gender": ["man", "woman", "boy", "girl"],
+      "price": 1290,
+      "sizes": ["XS", "S", "M", "L", "XL"],
       "sale": true,
-      "photo": "https://discountmsk.ru/upload/iblock/d66/z9xcqfos59weerx3ddf7pmawbegp1vb0/DSC_2890.jpg",
+      "photo": "https://placehold.co/300x200/eee/999?text=TShirt",
       "popular": true
     },
     {
       "id": 3,
-      "name": "Худи утепленное",
-      "description": "Теплое худи с капюшоном",
-      "category": "Одежда",
-      "price": 3490,
-      "sizes": [
-        "S",
-        "M",
-        "L",
-        "XL",
-        "XXL"
-      ],
+      "name": "Кроссовки спортивные",
+      "description": "Удобные кроссовки для бега",
+      "category": "Обувь",
+      "subcategory": "Кеды и кроссовки",
+      "gender": ["man", "woman"],
+      "price": 4990,
+      "sizes": ["39", "40", "41", "42", "43", "44", "45"],
       "sale": false,
-      "photo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTmG9MYgxcIbl0seUtVHT5lKoIHdr1nPe7uiw&s",
-      "popular": false
+      "photo": "https://placehold.co/300x200/eee/999?text=Sneakers",
+      "popular": true
     },
     {
       "id": 4,
-      "name": "Кепка бейсболка",
-      "description": "Стильная кепка",
+      "name": "Сумка женская",
+      "description": "Стильная сумка из экокожи",
       "category": "Аксессуары",
-      "price": 990,
+      "subcategory": "Сумки",
+      "gender": ["woman"],
+      "price": 2990,
       "sizes": null,
       "sale": false,
-      "photo": "https://hatsandcaps.ru/components/com_jshopping/files/img_products/full_36-063-16(0).jpg",
-      "popular": false
-    },
-    {
-      "id": 5,
-      "name": "Футболка классическая",
-      "description": "Хлопковая футболка, дышащая ткань",
-      "category": "Одежда",
-      "subcategory": null,
-      "gender": [
-        "all",
-        "boy"
-      ],
-      "price": 1990,
-      "sizes": [
-        "XS",
-        "S",
-        "M",
-        "L",
-        "XL",
-        "XXL"
-      ],
-      "sale": false,
-      "photo": "https://tvoe.ru/img/36ftb2s/product/754/1005/8/4670080046982-0-1.jpg",
+      "photo": "https://placehold.co/300x200/eee/999?text=Bag",
       "popular": false
     }
   ]
