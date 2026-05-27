@@ -201,7 +201,8 @@ function getFilteredProducts() {
         filtered = filtered.filter(p => p.subcategory === currentSubcategory);
     }
     
-    if (currentSize !== 'all' && currentCategory !== 'Аксессуары') {
+    // Фильтр по размеру - только если выбрана конкретная категория (не "Все") и это не Аксессуары
+    if (currentSize !== 'all' && currentCategory !== 'all' && currentCategory !== 'Аксессуары') {
         filtered = filtered.filter(p => {
             if (p.sizes && p.sizes.length) {
                 return p.sizes.includes(currentSize);
@@ -221,7 +222,8 @@ function getAvailableSubcategories() {
 }
 
 function getAvailableSizes() {
-    if (currentCategory === 'Аксессуары') return [];
+    // Показываем размеры ТОЛЬКО если выбрана категория (не "Все") и это не Аксессуары
+    if (currentCategory === 'all' || currentCategory === 'Аксессуары') return [];
     
     const filtered = getFilteredProducts();
     const allSizes = new Set();
@@ -400,7 +402,8 @@ function renderProductCard(product) {
 function renderFilters() {
     const availableSubcategories = getAvailableSubcategories();
     const availableSizes = getAvailableSizes();
-    const showSizeFilter = currentCategory !== 'Аксессуары';
+    // Показываем фильтр размера ТОЛЬКО если выбрана категория (не "Все") и это не Аксессуары
+    const showSizeFilter = currentCategory !== 'all' && currentCategory !== 'Аксессуары' && availableSizes.length > 0;
     
     let html = `
         <div class="filters-container">
@@ -433,7 +436,7 @@ function renderFilters() {
             </div>
             ` : ''}
             
-            ${showSizeFilter && availableSizes.length > 0 ? `
+            ${showSizeFilter ? `
             <div class="filter-section">
                 <div class="filter-title">📏 Размер</div>
                 <div class="filter-buttons">
@@ -491,7 +494,7 @@ function renderShopPage() {
             if (filterType === 'category') {
                 currentCategory = value;
                 currentSubcategory = 'all';
-                currentSize = 'all';
+                currentSize = 'all';  // Сбрасываем размер при смене категории
             }
             if (filterType === 'subcategory') currentSubcategory = value;
             if (filterType === 'size') currentSize = value;
@@ -513,8 +516,16 @@ function renderSalesPage() {
             e.stopPropagation();
             const filterType = btn.dataset.filter;
             const value = btn.dataset.value;
-            if (filterType === 'gender') currentGender = value;
-            if (filterType === 'category') currentCategory = value;
+            if (filterType === 'gender') {
+                currentGender = value;
+                currentSubcategory = 'all';
+                currentSize = 'all';
+            }
+            if (filterType === 'category') {
+                currentCategory = value;
+                currentSubcategory = 'all';
+                currentSize = 'all';
+            }
             if (filterType === 'subcategory') currentSubcategory = value;
             if (filterType === 'size') currentSize = value;
             renderSalesPage();
