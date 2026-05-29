@@ -29,7 +29,7 @@
       "price": 3490,
       "sizes": ["XS", "S", "M", "L", "XL", "XXL"],
       "sale": false,
-      "photo": "https://placehold.co/300x200/eee/999?text=Jeans",
+      "photo": "https://www.fitjeans.com/cdn/shop/files/DSC7091.jpg?v=1768476560",
       "popular": true
     },
     {
@@ -42,7 +42,7 @@
       "price": 1290,
       "sizes": ["XS", "S", "M", "L", "XL"],
       "sale": true,
-      "photo": "https://placehold.co/300x200/eee/999?text=TShirt",
+      "photo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT_YQHcrKbz6XNgvGI53ZbMrrcIvRhKIT9Eaw&s",
       "popular": true
     },
     {
@@ -55,7 +55,7 @@
       "price": 4990,
       "sizes": ["39", "40", "41", "42", "43", "44", "45"],
       "sale": false,
-      "photo": "https://placehold.co/300x200/eee/999?text=Sneakers",
+      "photo": "https://craftandglory.in/cdn/shop/files/0000s_0016_DSC07362.ARW.jpg",
       "popular": true
     },
     {
@@ -68,7 +68,7 @@
       "price": 2990,
       "sizes": null,
       "sale": false,
-      "photo": "https://placehold.co/300x200/eee/999?text=Bag",
+      "photo": "https://thejuteshop.ru/upload/iblock/7a9/fjivcwpklcbz8w7p38vdb1cqfjmhr429.jpg",
       "popular": false
     },
     {
@@ -81,7 +81,7 @@
       "price": 2490,
       "sizes": ["35", "36", "37", "38", "39"],
       "sale": true,
-      "photo": "https://placehold.co/300x200/eee/999?text=KidsShoes",
+      "photo": "https://avatars.mds.yandex.net/get-altay/10993309/2a0000018dede61102b422faa96d5346d378/L_height",
       "popular": false
     }
   ]
